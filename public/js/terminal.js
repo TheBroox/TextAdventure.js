@@ -1,9 +1,10 @@
 $(function(){
-	// ===== Onload Functions ============================================================
+	// ===== Onload Functions ===========================================================
 	displayResize();
+	messageServer('get games');
 
-	// ===== Event Handlers ==============================================================
-	// ----- Input Submit ----------------------------------------------------------------
+	// ===== Event Handlers =============================================================
+	// ----- Input Submit ---------------------------------------------------------------
 	$('#console').submit(function(event) {
 		event.preventDefault();
 		var inputString = $('#input').val();
@@ -11,12 +12,14 @@ $(function(){
 		$('#input').val('');
 		toScreen(inputString,'user');
 		if(inputString !== ''){
-			inputBuffer.push(inputString);
 			messageServer(inputString);
+			if(inputString !== inputBuffer[inputBuffer.length-1]){
+				inputBuffer.push(inputString);
+			}
 		}
 		inputBufferIndex = inputBuffer.length;
 	});
-	// ----- Input Buffer ----------------------------------------------------------------
+	// ----- Input Buffer ---------------------------------------------------------------
 	var inputBuffer = [];
 	var inputBufferIndex = 0;
 	$(document).keydown(function(e) {
@@ -37,15 +40,19 @@ $(function(){
 		}
 		e.preventDefault();
 	});
+	// ----- Window Resize Listener -----------------------------------------------------
 	$(window).resize(function(){
 		displayResize();
 	});
 });
 
 // ===== Functions ======================================================================
+// ----- Send Message to Server ---------------------------------------------------------
 function messageServer(message){
-	$.post('http://localhost:3000', {"input": message}, function(data) {
+	$.post('http://localhost:3000/console', {"input": message}, function(data) {
 		toScreen(data.response,'console');
+	}).fail(function(){
+		toScreen('Unable to reach server.','terminal');
 	});
 }
 // ----- Insure Terminal Appearence -----------------------------------------------------
