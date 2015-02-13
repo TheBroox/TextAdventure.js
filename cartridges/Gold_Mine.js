@@ -47,7 +47,7 @@ exports.gameData = {
 // === Game Functions ===
 exports.gameFunctions = {
 	take : function(game, command, actions){
-		return 'Cart: '+inactions.take(game, command);
+		return 'Cart: '+actions.take(game, command);
 	}
 }
 
