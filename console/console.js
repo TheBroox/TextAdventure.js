@@ -20,7 +20,6 @@ exports.input = function(input, gameID){
 			try {
 				return eval('gameFunctions.'+command.action+'(game,command,actions)');
 			} catch(error) {
-				console.log(error)
 				return eval('actions.'+command.action+'(game,command)');
 			}
 		} catch(error){
@@ -39,10 +38,6 @@ exports.input = function(input, gameID){
 		}
 	}
 };
-
-function globalFunction(){
-	return 'global';
-}
 
 // ----------------------------\
 // === Game Setup Functions ===========================================================================================
@@ -229,7 +224,6 @@ function interact(game, interaction, subject){
 		}
 		return interactionResult;
 	} catch(error) {
-		console.log(error);
 		var interactionResult = getCurrentLocation(game).interactables[subject][interaction];
 		if(interactionResult === undefined || typeof interactionResult === 'function'){
 			throw 'noString';
