@@ -55,7 +55,7 @@ function messageServer(message){
 		toScreen('Unable to reach server.','terminal');
 	});
 }
-// ----- Insure Terminal Appearence -----------------------------------------------------
+// ----- Insure Terminal Appearance -----------------------------------------------------
 function displayResize(){
 	$('#display').height($(window).height()-30);
 	$('#display').scrollTop($('#display')[0].scrollHeight);
