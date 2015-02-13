@@ -42,7 +42,7 @@ exports.parse = function (string){
 		}
 	}
 	return command;
-}
+};
 
 // === Word Lists ===
 var skipWords = ['','a','an','at','in','on','the','to'];
