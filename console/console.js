@@ -18,8 +18,9 @@ exports.input = function(input, gameID){
 		console.log(gameID + ': ' + game.commandCounter);
 		try {
 			try {
-				return eval('gameFunctions.'+command.action+'(game,command)');
+				return eval('gameFunctions.'+command.action+'(game,command,actions)');
 			} catch(error) {
+				console.log(error)
 				return eval('actions.'+command.action+'(game,command)');
 			}
 		} catch(error){
@@ -38,6 +39,10 @@ exports.input = function(input, gameID){
 		}
 	}
 };
+
+function globalFunction(){
+	return 'global';
+}
 
 // ----------------------------\
 // === Game Setup Functions ===========================================================================================
