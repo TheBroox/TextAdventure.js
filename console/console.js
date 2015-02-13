@@ -224,6 +224,7 @@ function interact(game, interaction, subject){
 		}
 		return interactionResult;
 	} catch(error) {
+		console.log(error);
 		var interactionResult = getCurrentLocation(game).interactables[subject][interaction];
 		if(interactionResult === undefined || typeof interactionResult === 'function'){
 			throw 'noString';
