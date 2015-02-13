@@ -1,5 +1,5 @@
 // === Import Necessary Functionality ===
-var fs = require('fs');
+var fileSystem = require('fs');
 var parser = require('./parser.js');
 
 // === Creat Necessary Variables ===
@@ -12,10 +12,16 @@ exports.input = function(input, gameID){
 	var command = parser.parse(input);
 	var game = games[gameID];
 	if(game){
+		var gameFunctions = game.gameFunctions;
+		game = game.gameData;
 		++game.commandCounter;
 		console.log(gameID + ': ' + game.commandCounter);
 		try {
-			return eval('actions.'+command.action+'(game,command)');
+			try {
+				return eval('gameFunctions.'+command.action+'(game,command)');
+			} catch(error) {
+				return eval('actions.'+command.action+'(game,command)');
+			}
 		} catch(error){
 			try {
 				return interact(game, command.action, command.subject);
@@ -32,11 +38,12 @@ exports.input = function(input, gameID){
 		}
 	}
 };
+
 // ----------------------------\
 // === Game Setup Functions ===========================================================================================
 // ----------------------------/
 function listCartridges(){
-	var cartridges = fs.readdirSync('./cartridges/');
+	var cartridges = fileSystem.readdirSync('./cartridges/');
 	var cartridgesFormated = 'Avaliable Games: \n';
 	for(var i = 0; i < cartridges.length; i++){
 		cartridgesFormated = cartridgesFormated.concat(cartridges[i].substr(0,cartridges[i].lastIndexOf('.')));
@@ -53,8 +60,8 @@ function loadCartridge(gameID, gameName){
 	}
 	try {
 		var file = eval('require("../cartridges/'+gameName+'.js")');
-		games[gameID] = file.cartridge;
-		return games[gameID].introText + '\n' + getLocationDescription(games[gameID]);
+		games[gameID] = {gameData: file.gameData, gameFunctions: file.gameFunctions};
+		return games[gameID].gameData.introText + '\n' + getLocationDescription(games[gameID].gameData);
 	} catch(error){
 		return "Could not load " + gameName;
 	}
@@ -73,16 +80,23 @@ var actions = {
 			return interact(game, 'drop', command.subject);
 		} catch(error) {
 			try {
-				var currentLocation = getCurrentLocation(game); 
+				var currentLocation = getCurrentLocation(game);
 				moveItem(command.subject, game.player.inventory, currentLocation.items);
 				var item = getItem(currentLocation.items, command.subject);
-				item.hidden = false;;
+				item.hidden = false;
 				return command.subject + ' dropped';
 			} catch(error2){
-				console.log(error2);
 				return 'You do not have a ' + command.subject + ' to drop.';
 			}
 		}
+	},
+
+	go : function(game, command){
+		if(!command.subject){
+			return 'Where do you want to go?';
+		}
+		var exits = getCurrentLocation(game);
+		// TODO Finish Function
 	},
 
 	inventory : function(game, command){
@@ -128,12 +142,18 @@ var actions = {
 				moveItem(command.subject, getCurrentLocation(game).items, game.player.inventory);
 				return command.subject + ' taken';
 			} catch(error2){
-				console.log(error2);
 				return 'Best just to leave the ' + command.subject + ' as it is.';
 			}
 		}
+	},
+
+	use : function(game, command){
+		//TODO Finish Function
+		return "TODO";
 	}
 };
+
+
 // ----------------------------\
 // === Helper Functions ===============================================================================================
 // ----------------------------/
@@ -160,11 +180,26 @@ function getLocationDescription(game){
 				}
 			}
 		}
+		var exitString = ' Exits are';
+		var exitCount = 1;
+		for(var exit in currentLocation.exits){
+			var exitObject = currentLocation.exits[exit];
+			switch (exitCount){
+				case 1 :
+					exitString = exitString.concat(' '+exitObject.displayName);
+					break;
+				default :
+					exitString = exitString.concat(', '+exitObject.displayName);
+			}
+			++exitCount;
+		}
+		description = description.concat(exitString.concat('.'));
 	} else {
 		description = currentLocation.displayName;
 	}
 	return description;
 }
+
 function getItem(itemLocation, itemName){
 	return itemLocation[getItemName(itemLocation, itemName)];
 }
@@ -201,7 +236,7 @@ function moveItem(itemName, startLocation, endLocation){
 	var itemName = getItemName(startLocation, itemName);
 	var itemAtOrigin = getItem(startLocation, itemName);
 	if(itemAtOrigin === undefined){
-		throw itemDoesNotExist;
+		throw 'itemDoesNotExist';
 	}
 	var itemAtDestination = getItem(endLocation, itemName);
 	if(itemAtDestination === undefined) {
