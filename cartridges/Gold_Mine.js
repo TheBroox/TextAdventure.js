@@ -1,5 +1,5 @@
 // === Game Data ===
-var gameData = {
+exports.gameData = {
 	commandCounter : 0,
 	introText : 'Welcome to the Crooked Gulch Gold Mine. What it lacks in safety precautions it more than makes up for in gold. Watch your step and you might just make it out with riches beyond your wildest imagination!',
 	player : {
@@ -15,8 +15,8 @@ var gameData = {
 				helmets : { look : 'It is a pile of miner helmets with lights on them. They seem to still be operational.' },
 				helmet : {
 					look : 'It is a pile of miner helmets with lights on them. They seem to still be operational.',
-					take : function(){
-						itemCap('helmet',2);
+					test : function(){
+						return testFunction();
 					}
 				},
 				sign : { look : 'The sign reads "Crooked Gulch Gold Mine" and has a note tacked to the bottom of it.'},
@@ -45,18 +45,13 @@ var gameData = {
 };
 
 // === Game Functions ===
-var gameFunctions = {
+exports.gameFunctions = {
 	take : function(game, command){
 		return 'Cart take';
 	}
 }
 
-
 // === Helper Functions ===
-function itemCap(item, number){
-	
+function testFunction(){
+	return 'test';
 }
-
-// === External Access to Game Data ===
-module.exports.gameData = gameData;
-module.exports.gameFunctions = gameFunctions;
