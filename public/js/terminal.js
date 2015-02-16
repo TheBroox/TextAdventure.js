@@ -22,8 +22,8 @@ $(function(){
 	// ----- Input Buffer ---------------------------------------------------------------
 	var inputBuffer = [];
 	var inputBufferIndex = 0;
-	$(document).keydown(function(e) {
-		switch(e.which) {
+	$(document).keydown(function(event) {
+		switch(event.which) {
 			case 38: // up
 				if(inputBufferIndex>0){
 					--inputBufferIndex;
@@ -38,7 +38,7 @@ $(function(){
 				break;
 			default: return;
 		}
-		e.preventDefault();
+		event.preventDefault();
 	});
 	// ----- Window Resize Listener -----------------------------------------------------
 	$(window).resize(function(){
