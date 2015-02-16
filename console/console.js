@@ -23,6 +23,7 @@ exports.input = function(input, gameID){
 				return eval('actions.'+command.action+'(game,command)');
 			}
 		} catch(error){
+			console.log(error);
 			try {
 				return interact(game, command.action, command.subject);
 			} catch (error2) {
@@ -95,8 +96,31 @@ var actions = {
 		if(!command.subject){
 			return 'Where do you want to go?';
 		}
-		var exits = getCurrentLocation(game);
-		// TODO Finish Function
+		var exits = getCurrentLocation(game).exits;
+		var playerDestination = null
+		try {
+			playerDestination = exits[command.subject].destination;
+		} catch (error) {
+			try {
+				for(var exit in exits){
+					var exitObject = exits[exit];
+					if(exitObject.displayName.toLowerCase() === command.subject){
+						playerDestination = exitObject.destination;
+					}
+				}
+			} catch (error2) {
+				return 'You can\'t go there';
+			}
+		}
+		getCurrentLocation(game).firstVisit = false;
+		if (getCurrentLocation(game).tearDown !== undefined){
+			getCurrentLocation(game).tearDown();
+		}
+		if (game.map[playerDestination].setUp !== undefined){
+			game.map[playerDestination].setUp();
+		}
+		game.player.currentLocation = playerDestination;
+		return getLocationDescription(game);
 	},
 
 	inventory : function(game, command){
@@ -118,7 +142,7 @@ var actions = {
 
 	look : function(game, command){
 		if(!command.subject){
-			return getLocationDescription(game);
+			return getLocationDescription(game, true);
 		}
 		try {
 			return getItem(game.player.inventory, command.subject).description;
@@ -165,10 +189,10 @@ function getCurrentLocation(game){
 	return game.map[game.player.currentLocation];
 }
 
-function getLocationDescription(game){
+function getLocationDescription(game, forcedLongDescription){
 	var currentLocation = getCurrentLocation(game);
 	var description;
-	if(currentLocation.firstVisit){
+	if(currentLocation.firstVisit || forcedLongDescription){
 		description = currentLocation.description;
 		for(var item in currentLocation.items){
 			var itemObject = currentLocation.items[item];
