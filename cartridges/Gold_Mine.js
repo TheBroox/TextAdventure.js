@@ -31,16 +31,24 @@ exports.gameData = {
 				}
 			},
 			exits : {
-				north : {
-					displayName : 'North',
-					destination : 'Tunnel'
-				},
-				south : {
-					displayName : 'South',
+				inside : {
+					displayName : 'Inside',
 					destination : 'Tunnel'
 				}
 			}
+		},
+		'Tunnel' : {
+			firstVisit : true,
+			displayName : 'Tunnel',
+			description : 'It is exceedingly dark in here.',
+			exits : {
+				outside : {
+					displayName : 'Outside',
+					destination : 'MineEntrance'
+				}
+			}
 		}
+
 	}
 };
 
@@ -53,5 +61,5 @@ exports.gameFunctions = {
 
 // === Helper Functions ===
 function testFunction(){
-	return 'test';
+	return 'It looks like it still works.';
 }
