@@ -1,7 +1,6 @@
 // === Server Flags ===
 var debugMode = false;
 
-
 // === Initilize Express ===
 var express = require('express');
 var app = express();
