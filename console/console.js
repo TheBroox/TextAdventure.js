@@ -1,3 +1,6 @@
+// === Debug Variable ===
+var debugMode = false;
+
 // === Import Necessary Functionality ===
 var fileSystem = require('fs');
 var parser = require('./parser.js');
@@ -18,15 +21,20 @@ exports.input = function(input, gameID){
 		console.log(gameID + ': ' + game.commandCounter);
 		try {
 			try {
+				debug('---Attempting to run cartridge command "'+command.action+'"');
 				return eval('gameFunctions.'+command.action+'(game,command,actions)');
-			} catch(error) {
+			} catch(cartridgeCommandError) {
+				debug('-----'+cartridgeCommandError);
+				debug('---Attempting to run cartridge command "'+command.action+'"');
 				return eval('actions.'+command.action+'(game,command)');
 			}
-		} catch(error){
-			console.log(error);
+		} catch(consoleCommandError){
 			try {
+				debug('-----'+consoleCommandError);
+				debug('---Attempting to perform '+command.action+' interaction');
 				return interact(game, command.action, command.subject);
-			} catch (error2) {
+			} catch (interactionError) {
+				debug('-----'+interactionError);
 				return "I don't know how to do that.";
 			}
 		}
@@ -183,6 +191,10 @@ var actions = {
 // ----------------------------/
 function clone(objectToBeCloned){
 	return JSON.parse(JSON.stringify(objectToBeCloned));
+}
+
+function debug(debugText){
+	if(debugMode){console.log(debugText);}
 }
 
 function getCurrentLocation(game){

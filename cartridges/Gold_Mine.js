@@ -37,10 +37,10 @@ exports.gameData = {
 				}
 			},
 			setup : function(){
-				console.log('Setup Function');
+				
 			},
 			teardown : function(){
-				console.log('Teardown Function');
+				
 			}
 		},
 		'Tunnel' : {
