@@ -35,6 +35,12 @@ exports.gameData = {
 					displayName : 'Inside',
 					destination : 'Tunnel'
 				}
+			},
+			setup : function(){
+				console.log('Setup Function');
+			},
+			teardown : function(){
+				console.log('Teardown Function');
 			}
 		},
 		'Tunnel' : {
