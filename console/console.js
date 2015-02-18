@@ -113,11 +113,11 @@ var actions = {
 			}
 		}
 		getCurrentLocation(game).firstVisit = false;
-		if (getCurrentLocation(game).tearDown !== undefined){
-			getCurrentLocation(game).tearDown();
+		if (getCurrentLocation(game).teardown !== undefined){
+			getCurrentLocation(game).teardown();
 		}
-		if (game.map[playerDestination].setUp !== undefined){
-			game.map[playerDestination].setUp();
+		if (game.map[playerDestination].setup !== undefined){
+			game.map[playerDestination].setup();
 		}
 		game.player.currentLocation = playerDestination;
 		return getLocationDescription(game);
