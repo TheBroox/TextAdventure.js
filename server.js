@@ -8,7 +8,7 @@ var app = express();
 // === Import Necessary Functionality ==
 app.use(express.json());
 app.use(express.urlencoded());
-app.use(express.static(__dirname + '/public'));
+app.use(express.static(__dirname + '/terminal'));
 app.use(express.cookieParser());
 app.use(express.session({secret: '1234567890QWERTY'}));
 
