@@ -6,7 +6,9 @@ TextAdventure.js is a text adventure engine that runs on [Node.js](http://nodejs
 
 The sever is an extremely simple Node.js file. It fires up an instance of an Express server on port 3000 to which it serves the Terminal to. All AJAX requests made to it are quickly passed to the Console to be executed. Responses are then dispatched back to the terminal. To get TextAdventure up and running on port 3000 simply run the following command from the project's folder:
 
->node server.js
+```
+node server.js
+```
 
 ## Terminal
 
