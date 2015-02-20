@@ -42,7 +42,7 @@ exports.gameData = {
 			teardown : function(){
 				
 			},
-			updateRoom : function(command){
+			updateLocation : function(command){
 				console.log(command);
 				return testFunction();
 			}

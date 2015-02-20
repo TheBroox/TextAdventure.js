@@ -42,16 +42,16 @@ exports.input = function(input, gameID){
 			returnString = "I don't know how to do that.";
 		} else {
 			try {
-				var updateRoomString = getCurrentLocation(game).updateRoom(command);
-			} catch(updateRoomError){
-				debug('---Failed to Perform updateRoom()');
-				debug('-----'+updateRoomError);
+				var updateLocationString = getCurrentLocation(game).updateLocation(command);
+			} catch(updateLocationError){
+				debug('---Failed to Perform updateLocation()');
+				debug('-----'+updateLocationError);
 			}
 		}
-		if(updateRoomString === undefined){
+		if(updateLocationString === undefined){
 			return returnString;
 		} else {
-			return updateRoomString;
+			return updateLocationString;
 		}
 	} else {
 		console.log(gameID + ': no game');
@@ -95,6 +95,11 @@ function loadCartridge(gameID, gameName){
 // === Game Commands ==================================================================================================
 // ----------------------------/
 var actions = {
+
+	die : function(game, command){
+		//TODO Finish Function
+		return "TODO";
+	},
 
 	drop : function(game, command){
 		if(!command.subject){
