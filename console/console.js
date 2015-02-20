@@ -1,5 +1,5 @@
 // === Debug Variable ===
-var debugMode = false;
+var debugMode = true;
 
 // === Import Necessary Functionality ===
 var fileSystem = require('fs');
@@ -18,25 +18,40 @@ exports.input = function(input, gameID){
 		var gameFunctions = game.gameFunctions;
 		game = game.gameData;
 		++game.commandCounter;
+		var returnString;
 		console.log(gameID + ': ' + game.commandCounter);
 		try {
 			try {
 				debug('---Attempting to run cartridge command "'+command.action+'"');
-				return eval('gameFunctions.'+command.action+'(game,command,actions)');
+				returnString = eval('gameFunctions.'+command.action+'(game,command,actions)');
 			} catch(cartridgeCommandError) {
 				debug('-----'+cartridgeCommandError);
 				debug('---Attempting to run cartridge command "'+command.action+'"');
-				return eval('actions.'+command.action+'(game,command)');
+				returnString = eval('actions.'+command.action+'(game,command)');
 			}
 		} catch(consoleCommandError){
 			try {
 				debug('-----'+consoleCommandError);
 				debug('---Attempting to perform '+command.action+' interaction');
-				return interact(game, command.action, command.subject);
+				returnString = interact(game, command.action, command.subject);
 			} catch (interactionError) {
 				debug('-----'+interactionError);
-				return "I don't know how to do that.";
 			}
+		}
+		if(returnString === undefined){
+			returnString = "I don't know how to do that.";
+		} else {
+			try {
+				var updateRoomString = getCurrentLocation(game).updateRoom(command);
+			} catch(updateRoomError){
+				debug('---Failed to Perform updateRoom()');
+				debug('-----'+updateRoomError);
+			}
+		}
+		if(updateRoomString === undefined){
+			return returnString;
+		} else {
+			return updateRoomString;
 		}
 	} else {
 		console.log(gameID + ': no game');

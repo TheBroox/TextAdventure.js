@@ -41,6 +41,10 @@ exports.gameData = {
 			},
 			teardown : function(){
 				
+			},
+			updateRoom : function(command){
+				console.log(command);
+				return testFunction();
 			}
 		},
 		'Tunnel' : {
@@ -62,10 +66,13 @@ exports.gameData = {
 exports.gameFunctions = {
 	take : function(game, command, actions){
 		return 'Cart: '+actions.take(game, command);
+	},
+	test : function(game, command, actions){
+		return 'This is a test.';
 	}
 }
 
 // === Helper Functions ===
 function testFunction(){
-	return 'It looks like it still works.';
+	return gameFunctions.test();
 }
