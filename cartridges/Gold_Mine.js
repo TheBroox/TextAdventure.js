@@ -13,19 +13,21 @@ exports.gameData = {
 			description : 'You stand at the partially collapsed entrance to the mine. Nearby there is a sign sticking out of a pile of miner helmets.',
 			interactables : {
 				helmets : { look : 'It is a pile of miner helmets with lights on them. They seem to still be operational.' },
-				helmet : {
-					look : 'It is a pile of miner helmets with lights on them. They seem to still be operational.',
+				sign : { look : 'The sign reads "Crooked Gulch Gold Mine" and has a note tacked to the bottom of it.'},
+				note : {
+					look : 'Written in an untidy scroll the note reads "Generator blew. Lights out."',
 					test : function(){
 						return testFunction();
 					}
-				},
-				sign : { look : 'The sign reads "Crooked Gulch Gold Mine" and has a note tacked to the bottom of it.'},
-				note : { look : 'Written in an untidy scroll the note reads "Generator blew. Lights out."'}
+				}
 			},
 			items : {
 				helmet : {
 					displayName : 'Miner Helmet',
-					description : 'This trusty old miner helmet is covered in dents but still seems sturdy. Plus, the light works.',
+					description : 'A trusty old miner helmet covered in minor dents. Still seems sturdy and the light works.',
+					use : function(){
+						return "You're doing it Peter!";
+					},
 					quantity : 1,
 					hidden : true
 				}
@@ -43,7 +45,6 @@ exports.gameData = {
 				
 			},
 			updateLocation : function(command){
-				console.log(command);
 				return testFunction();
 			}
 		},

@@ -1,5 +1,5 @@
 // === Debug Variable ===
-var debugMode = true;
+var debugMode = false;
 
 // === Import Necessary Functionality ===
 var fileSystem = require('fs');
@@ -173,11 +173,16 @@ var actions = {
 			return getLocationDescription(game, true);
 		}
 		try {
-			return getItem(game.player.inventory, command.subject).description;
-		} catch(error) {
+			try {
+				return getItem(game.player.inventory, command.subject).description;
+			} catch (itemNotInInventoryError){
+				return getItem(getCurrentLocation(game).items, command.subject).description;
+			}
+		} catch(isNotAnItemError) {
 			try {
 				return interact(game, 'look', command.subject);
-			} catch(error2) {
+			} catch(subjectNotFound
+				) {
 				return 'There is nothing important about the '+command.subject+'.';
 			}
 		}
@@ -200,8 +205,14 @@ var actions = {
 	},
 
 	use : function(game, command){
-		//TODO Finish Function
-		return "TODO";
+		if(!command.subject){
+			return 'What would you like to use?';
+		}
+		try {
+			return getItem(game.player.inventory, command.subject).use();;
+		} catch (itemNotInInventoryError) {
+			return 'Can\'t do that.'
+		}
 	}
 };
 
@@ -209,12 +220,23 @@ var actions = {
 // ----------------------------\
 // === Helper Functions ===============================================================================================
 // ----------------------------/
-function clone(objectToBeCloned){
-	return JSON.parse(JSON.stringify(objectToBeCloned));
+function clone(obj) {
+    if(obj == null || typeof(obj) != 'object'){
+        return obj;
+    }
+    var temp = obj.constructor();
+    for(var key in obj) {
+        if(obj.hasOwnProperty(key)) {
+            temp[key] = clone(obj[key]);
+        }
+    }
+    return temp;
 }
 
 function debug(debugText){
-	if(debugMode){console.log(debugText);}
+	if(debugMode){
+		console.log(debugText);
+	}
 }
 
 function getCurrentLocation(game){
@@ -273,19 +295,7 @@ function getItemName(itemLocation, itemName){
 }
 
 function interact(game, interaction, subject){
-	try {
-		var interactionResult = eval('game.map.'+game.player.currentLocation+'.interactables.'+subject+'.'+interaction+'();');
-		if(interactionResult === undefined){
-			throw 'noFunction';
-		}
-		return interactionResult;
-	} catch(error) {
-		var interactionResult = getCurrentLocation(game).interactables[subject][interaction];
-		if(interactionResult === undefined || typeof interactionResult === 'function'){
-			throw 'noString';
-		}
-		return interactionResult;
-	}
+	return getCurrentLocation(game).interactables[subject][interaction];
 }
 
 function moveItem(itemName, startLocation, endLocation){

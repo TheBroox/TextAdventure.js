@@ -18,7 +18,7 @@ The Terminal consists of a single HTML file, and single CSS file and two JavaScr
 
 The Console takes the user input passed to it by the Server acts on it and then returns a string that ultimately displayed to the user. Upon receiving the the user input the first thing the Console does is run it through the Parser to convert it to a more easy to use JavaScript object; consisting of an action, a subject and an object. The Console then runs the appropriate functionality based on the following hierarchy:
 
-1. Does the action have a corresponding function in the cartridges
+1. Does the action have a corresponding function in the cartridge
 2. Does the action have a corresponding function in the console
 3. Does the subject have a corresponding interaction
 
@@ -44,10 +44,14 @@ LOAD will only run if the player is not currently playing a game. Similarly LOAD
 
 ### LOOK Command
 
-LOOK will return the player's current room's description if not subject is passed to it. If a subject is passed to it LOOK instead returns the look property of the subject within the player's current room's list of interactables. 
+LOOK will return the player's current room's description if not subject is passed to it. If a subject is passed to it LOOK instead attempts to return the description of the item in the player's inventory matching the description. Failing that, LOOK attempts to return the description of the matching item in the player's current room. Finally, if that fails it attempts to return the look interaction of matching interactable in the player's current room. 
 
 ### TAKE Command
 
 TAKE checks to see if the player's current location has an item that matched the command's subject. If so the item is removed from the player's current location's list of items and is added to the player's inventory. A confirmation message or a failure message is the passed back to the user.
+
+### USE Command
+
+Use will run the use() function of item in the player's inventory that matches the command's subject.
 
 ## Cartridges
