@@ -26,6 +26,10 @@ Following the executions of the appropriate functionality, the updateLocation() 
 
 The console implements the following player commands: "DROP", "GO", "INVENTORY", "LOAD", "LOOK", and "TAKE". Each is detailed below.
 
+### DIE Command
+
+DIE deletes the player current game and returns a message to the user. Users will then need to LOAD a new game.
+
 ### DROP Command
 
 DROP checks to see if the player has an item in their inventory that matches the command's subject. If so the item is removed from the player's inventory and is added to the player's current location's items. A confirmation message or a failure message is passed back to the user.

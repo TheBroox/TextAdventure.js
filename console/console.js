@@ -84,6 +84,7 @@ function loadCartridge(gameID, gameName){
 	}
 	try {
 		var file = eval('require("../cartridges/'+gameName+'.js")');
+		file.gameData.gameID = gameID;
 		games[gameID] = {gameData: file.gameData, gameFunctions: file.gameFunctions};
 		return games[gameID].gameData.introText + '\n' + getLocationDescription(games[gameID].gameData);
 	} catch(error){
@@ -97,8 +98,8 @@ function loadCartridge(gameID, gameName){
 var actions = {
 
 	die : function(game, command){
-		//TODO Finish Function
-		return "TODO";
+		delete games[game.gameID];
+		return 'You are dead';
 	},
 
 	drop : function(game, command){
@@ -317,5 +318,4 @@ function moveItem(itemName, startLocation, endLocation){
 			delete startLocation[itemName];
 		}
 	}
-	return 'success';
 }
