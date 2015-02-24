@@ -3,14 +3,15 @@ var debugMode = false;
 
 // === Initilize Express ===
 var express = require('express');
+var bodyParser = require('body-parser');
+var session = require('express-session')
 var app = express();
 
 // === Import Necessary Functionality ==
-app.use(express.json());
-app.use(express.urlencoded());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(__dirname + '/terminal'));
-app.use(express.cookieParser());
-app.use(express.session({secret: '1234567890QWERTY'}));
+app.use(session({secret: '1234567890QWERTY', resave: false, saveUninitialized: true}));
 
 // === Start Server ===
 var server = app.listen(3000, function(){
@@ -19,6 +20,10 @@ var server = app.listen(3000, function(){
 
 // === Create Console ===
 var con = require('./console/console.js');
+
+// === Open Browser ===
+var open = require('open');
+open('localhost:3000');
 
 // === Respond to AJAX calls ===
 app.post('/console', function(req,res){
