@@ -26,9 +26,9 @@ Following the executions of the appropriate functionality, the updateLocation() 
 
 The console implements the following player commands: "DROP", "GO", "INVENTORY", "LOAD", "LOOK", and "TAKE". Each is detailed below.
 
-### DIE Command
+### `Die` Command
 
-DIE deletes the player current game and returns a message to the user. Users will then need to LOAD a new game.
+`Die` deletes the user's current game and returns a message to the user.
 
 ### DROP Command
 
@@ -59,3 +59,21 @@ TAKE checks to see if the player's current location has an item that matches the
 Use will run the use() function of the item in the player's inventory that matches the command's subject.
 
 ## Cartridges
+
+Cartridges are loaded into the Console and are then playable by the user. The Console does most of the heavy lifting while the Cartridge adds all the flavor. A Cartridge consists of two very important objects, gameData and gameFunctions, as well as any number of helper functions.
+
+### gameData Object
+
+The gameData object has four required components; a commandCounter, introText, a player object and a map object. It can also contain any number of other fields objects and functions as need by the game. Below is bare-bones architecture of the gameData object.
+
+```javaScript
+exports.gameData = {
+	commandCounter : 0,
+	introText : 'Lorem Ipsum',
+	player : { },
+	map : {	}
+};
+```
+
+#### commandCounter
+
