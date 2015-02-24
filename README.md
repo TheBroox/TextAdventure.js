@@ -79,7 +79,7 @@ exports.gameData = {
 
 The `commandCounter` is an int that keeps track of the number of inputs the user has submitted to the console for evaluation on this particular cartridge. The `commandCounter` can be initialized to any integer depending on the cartridges needs.
 
-### 'introText'
+### `introText`
 
 The console will display the `introText` to the user following a successful `load` command.
 
