@@ -1,14 +1,14 @@
 {
-  "name": "TextAdventure",
-  "description": "Run you very own Text Adventure server",
+  "name": "text-adventure",
   "version": "0.0.1",
+  "description": "Run you very own Text Adventure server",
+  "keywords": ["text-adventure","interactive-fiction"],
   "author": "Brooks Child <thebroox@gmail.com>",
   "license": "MIT License",
   "repository": {
   	"type": "git",
   	"url": "https://github.com/TheBroox/TextAdventure.js"
   },
-  "private": true,
   "dependencies": {
     "body-parser": "^1.12.0",
     "express": "^4.12.0",
