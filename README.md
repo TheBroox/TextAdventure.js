@@ -64,7 +64,7 @@ Cartridges are loaded into the Console and are then playable by the user. The Co
 
 ### `gameData` Object
 
-The `gameData` object has four required components; a `commandCounter`, `introText`, a `player` object and a `map` object. It can also contain any number of other fields objects and functions as need by the game. Below is bare-bones architecture of the gameData object.
+The `gameData` object has four required components; a `commandCounter`, `introText`, a `player` object and a `map` object. It can also contain any number of other fields, objects and functions as needed by the cartridge. Below is bare-bones architecture of the `gameData` object.
 
 ```javaScript
 exports.gameData = {
@@ -77,12 +77,27 @@ exports.gameData = {
 
 #### `commandCounter`
 
-The `commandCounter` is an int that keeps track of the number of inputs the user has submitted to the console for evaluation on this particular cartridge. The `commandCounter` can be initialized to any integer depending on the cartridges needs.
+The `commandCounter` is an int that keeps track of the number of inputs the user has submitted to the console for evaluation on this particular cartridge. The `commandCounter` can be initialized to any integer depending on the cartridges needs. The console will increment the number by one each time it receives a command.
 
-### `introText`
+#### `introText`
 
 The console will display the `introText` to the user following a successful `load` command.
 
-### `player` Object
+#### `player` Object
 
+The `player` object has two required elements, `currentLocation` and `inventory`. It can also contain any number of other fields, objects and functions as needed by the cartridge. Below is bare-bones architecture of the `player` object.
 
+```javaScript
+player : {
+	currentLocation : 'MineEntrance',
+	inventory : {}
+}
+```
+
+##### `currentLocation`
+
+`currentLocation` is a string that points to the location that `player` is currently interacting with. It must be populated with a string that points to a matching location within the `map` object. That location will be the player's starting location. The console will keep `currentLocation` updated as the player moves from location to location within the game.
+
+##### `inventory` Object
+
+A player's `inventory` is a collection of `items` that the `player` takes with them from location to location as they move around within the game. The inventory can be empty or can have any number of `item`s that player will begin the game already possessing. 
