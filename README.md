@@ -32,7 +32,7 @@ The console implements the following player commands: `die`, `drop`, `go`, `inve
 
 ### `drop` Command
 
-`drop` checks to see if the player has an item in their inventory that matches the command's subject. If so the item is removed from the player's inventory and is added to the player's current location's items. A confirmation message or a failure message is passed back to the user.
+`drop` checks to see if the `player` has an item in their `inventory` that matches the command's subject. If so the item is removed from the `player`'s `inventory` and is added to the player's current location's items. A confirmation message or a failure message is passed back to the user.
 
 ### `go` Command
 
@@ -100,4 +100,31 @@ player : {
 
 ##### `inventory` Object
 
-A player's `inventory` is a collection of `items` that the `player` takes with them from location to location as they move around within the game. The inventory can be empty or can have any number of `item`s that player will begin the game already possessing. 
+A player's `inventory` is a collection of `items` that the `player` takes with them from location to location as they move around within the game. The inventory can be empty or can have any number of `item`s that player will begin the game already possessing. The `item` object is explained in greater later in this document.
+
+### `map` Object
+
+The `map` is a collection of `location` objects. It can also contain any number of other fields, objects and functions as needed by the cartridge.
+
+`location` Objects
+
+Each `location` has a name/key and the follwoing attributes: `firstVisit`, `displayName`, `description`, an `interactables` object, and `items` object, and an `exits` object. It has three opitional functions that can be implemented if needed: `setup()`, `teardown()` and `updateLocation()`. It can also contain any number of other fields, objects and functions as needed by the cartridge.
+
+#### `firstVisit`
+
+`firstVisit` is a boolean that when true will cause the Console to display the `description` to the user upon entering this location via the `move` command. It it is instead false then the user will be presented with the `displayName` instead. The console will set `firstVisit` to false when the user uses the `move` command to leave a `location`.
+
+#### `displayName`
+
+The user is presented with a location's `displayName` if `firstVisit` is set to false when the user makes use of the `go` command to enter this location.
+
+#### `description`
+
+The user is presented with a location's `description` if `firstVisit` is set to true when the user makes use of the `go` command to enter this location. Additionaly, the user is presented with the 'description' if they issue the 'look' command without a subject.
+
+#### `interactables` Object
+#### `items` Object
+#### `exits` Object
+#### `setup()` Function
+#### `teardown()` Function
+#### `updateLocation()` Function
