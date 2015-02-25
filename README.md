@@ -106,25 +106,25 @@ A player's `inventory` is a collection of `items` that the `player` takes with t
 
 The `map` is a collection of `location` objects. It can also contain any number of other fields, objects and functions as needed by the cartridge.
 
-`location` Objects
+####`location` Objects
 
 Each `location` has a name/key and the follwoing attributes: `firstVisit`, `displayName`, `description`, an `interactables` object, and `items` object, and an `exits` object. It has three opitional functions that can be implemented if needed: `setup()`, `teardown()` and `updateLocation()`. It can also contain any number of other fields, objects and functions as needed by the cartridge.
 
-#### `firstVisit`
+##### `firstVisit`
 
 `firstVisit` is a boolean that when true will cause the Console to display the `description` to the user upon entering this location via the `move` command. It it is instead false then the user will be presented with the `displayName` instead. The console will set `firstVisit` to false when the user uses the `move` command to leave a `location`.
 
-#### `displayName`
+##### `displayName`
 
 The user is presented with a location's `displayName` if `firstVisit` is set to false when the user makes use of the `go` command to enter this location.
 
-#### `description`
+##### `description`
 
 The user is presented with a location's `description` if `firstVisit` is set to true when the user makes use of the `go` command to enter this location. Additionaly, the user is presented with the 'description' if they issue the 'look' command without a subject.
 
-#### `interactables` Object
-#### `items` Object
-#### `exits` Object
-#### `setup()` Function
-#### `teardown()` Function
-#### `updateLocation()` Function
+##### `interactables` Object
+##### `items` Object
+##### `exits` Object
+##### `setup()` Function
+##### `teardown()` Function
+##### `updateLocation()` Function
