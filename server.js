@@ -23,7 +23,7 @@ var con = require('./console/console.js');
 
 // === Open Browser ===
 var open = require('open');
-open('localhost:3000');
+open('http://localhost:3000');
 
 // === Respond to AJAX calls ===
 app.post('/console', function(req,res){
