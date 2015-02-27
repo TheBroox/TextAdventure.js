@@ -1,14 +1,23 @@
 {
   "name": "text-adventure",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Run you very own Text Adventure server",
-  "keywords": ["text-adventure","interactive-fiction"],
+  "keywords": [
+    "text-adventure",
+    "interactive-fiction"
+  ],
   "author": "Brooks Child <thebroox@gmail.com>",
   "license": "MIT License",
-  "files": ["server.js", "README.md","cartridges","console","terminal"],
+  "files": [
+    "server.js",
+    "README.md",
+    "cartridges",
+    "console",
+    "terminal"
+  ],
   "repository": {
-  	"type": "git",
-  	"url": "https://github.com/TheBroox/TextAdventure.js"
+    "type": "git",
+    "url": "https://github.com/TheBroox/TextAdventure.js"
   },
   "dependencies": {
     "body-parser": "^1.12.0",
