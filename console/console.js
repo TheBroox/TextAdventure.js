@@ -296,6 +296,7 @@ function getItemName(itemLocation, itemName){
 }
 
 function interact(game, interaction, subject){
+	//TODO search items in inventory
 	return getCurrentLocation(game).interactables[subject][interaction];
 }
 
