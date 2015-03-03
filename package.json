@@ -8,6 +8,10 @@
   ],
   "author": "Brooks Child <thebroox@gmail.com>",
   "license": "MIT License",
+  "main": "server.js",
+  "scripts": {
+      "start": "node server.js"
+    },
   "files": [
     "server.js",
     "README.md",
