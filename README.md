@@ -56,7 +56,7 @@ The console implements the following player commands: `die`, `drop`, `go`, `inve
 
 ### `use` Command
 
-The `use` command will run the `use()` function of the item in the player's inventory that matches the command's subject.
+The `use` command will run the `use` function of the item in the player's inventory that matches the command's subject.
 
 ## Cartridges
 
@@ -123,7 +123,49 @@ The user is presented with a location's `displayName` if `firstVisit` is set to 
 The user is presented with a location's `description` if `firstVisit` is set to true when the user makes use of the `go` command to enter this location. Additionaly, the user is presented with the 'description' if they issue the 'look' command without a subject.
 
 ##### `interactables` Object
+
+A room may optionally have an `interactables` object. The `interatables` is a collection of interactions that the player can take while in this location. Each intractable object is it's own object within `interactables` which contains any number of key value pairs that map to its different interactions. An interaction can be either a string or a function that after executing any amount of arbitrary code returns a string. Below is an example of a barebones `interactables` object.
+
+```javaScript
+interactables : {
+	interactable1 : { interaction : 'returnString' },
+	interactable2 : {
+		interaction1 : unshownHelperFunction(),
+		interaction2 : function(){
+			return 'returnString';
+		}
+	}
+}
+```
+
 ##### `items` Object
+
+The `items` objects is a collection of items contained within this location. An item is also a JavaScript object and its structure is detailed below.
+
+###### `item` Object
+
+`item` objects can exist in both a player's inventory or they can reside in the `items` object of a location. Users can use the `take` command to move an `item` from a location to the player's inventory. The `drop` command does the reverse. Items have some mandatory properties; namely, `description`, `displayName`, `hidden`, and `quantity`. Optionally, it can contain a `use` function. An `item` can also contain any number of additional properties or functions as dictated by the design of the game.
+
+####### `description`
+
+The 'description' of an `item` is the string returned when the user submits the 'look' command lists the item's name or `displayName` as the subject.
+
+####### `displayName`
+
+The `displayName` of an item is the string used by the console in all text related to the item that is displayed to the user.
+
+####### `hidden`
+
+`hidden` is a boolean that if set to true will prevent the console from listing the item as in the location when constructing the location's description. Alternatively if `hidden` is set to true the item will be listed in the location's description.
+
+####### `quantity`
+
+An item's `quantityy` must be a non-negative int. The `quantity` keeps track of how many of that specific item are contained within any given location of the player's inventory. The 'take' command causes the `quantity` to be decremented for the named item with the location's items object and incremented with the player's inventory. The `drop` command does the revers. If an item's quantity ever reaches zero it is deleted.
+
+####### `use` Function
+
+The `use` function will run then the user issues the 'use' command and names the item as the item as the subject. The use function an execute any arbitrary code but must return a string that will be displayed to the user.
+
 ##### `exits` Object
 ##### `setup()` Function
 ##### `teardown()` Function
