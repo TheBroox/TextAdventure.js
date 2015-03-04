@@ -1,6 +1,6 @@
 {
   "name": "text-adventure",
-  "version": "0.0.3",
+  "version": "0.1.0",
   "description": "Run you very own Text Adventure server",
   "keywords": [
     "text-adventure",
@@ -10,8 +10,8 @@
   "license": "MIT License",
   "main": "server.js",
   "scripts": {
-      "start": "node server.js"
-    },
+    "start": "node server.js"
+  },
   "files": [
     "server.js",
     "README.md",
