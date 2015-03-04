@@ -23,7 +23,7 @@ exports.input = function(input, gameID){
 		try {
 			try {
 				debug('---Attempting to run cartridge command "'+command.action+'"');
-				returnString = eval('gameFunctions.'+command.action+'(game,command,actions)');
+				returnString = eval('gameFunctions.'+command.action+'(game,command,consoleInterface)');
 			} catch(cartridgeCommandError) {
 				debug('-----'+cartridgeCommandError);
 				debug('---Attempting to run cartridge command "'+command.action+'"');
@@ -88,6 +88,7 @@ function loadCartridge(gameID, gameName){
 		games[gameID] = {gameData: file.gameData, gameFunctions: file.gameFunctions};
 		return games[gameID].gameData.introText + '\n' + getLocationDescription(games[gameID].gameData);
 	} catch(error){
+		console.log(error);
 		return "Could not load " + gameName;
 	}
 }
@@ -232,6 +233,10 @@ function clone(obj) {
         }
     }
     return temp;
+}
+
+function consoleInterface(game, command){
+	return eval('actions.'+command.action+'(game,command);')
 }
 
 function debug(debugText){
