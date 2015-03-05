@@ -146,23 +146,23 @@ The `items` objects is a collection of items contained within this location. An 
 
 `item` objects can exist in both a player's inventory or they can reside in the `items` object of a location. Users can use the `take` command to move an `item` from a location to the player's inventory. The `drop` command does the reverse. Items have some mandatory properties; namely, `description`, `displayName`, `hidden`, and `quantity`. Optionally, it can contain a `use` function. An `item` can also contain any number of additional properties or functions as dictated by the design of the game.
 
-*`description`*
+**`description`**
 
 The 'description' of an `item` is the string returned when the user submits the 'look' command lists the item's name or `displayName` as the subject.
 
-*`displayName`*
+**`displayName`**
 
 The `displayName` of an item is the string used by the console in all text related to the item that is displayed to the user.
 
-*`hidden`*
+**`hidden`**
 
 `hidden` is a boolean that if set to true will prevent the console from listing the item as in the location when constructing the location's description. Alternatively if `hidden` is set to true the item will be listed in the location's description.
 
-*`quantity`*
+**`quantity`**
 
 An item's `quantityy` must be a non-negative int. The `quantity` keeps track of how many of that specific item are contained within any given location of the player's inventory. The 'take' command causes the `quantity` to be decremented for the named item with the location's items object and incremented with the player's inventory. The `drop` command does the revers. If an item's quantity ever reaches zero it is deleted.
 
-*`use()` Function*
+**`use()` Function*
 
 The `use()` function will run then the user issues the 'use' command and names the item as the item as the subject. The use function an execute any arbitrary code but must return a string that will be displayed to the user.
 
@@ -174,11 +174,11 @@ The `exits` object contains any number of `exit` objects that detail how this lo
 
 An `exit` object has two required keys; `displayName` and `destination`.
 
-*`displayName`*
+**`displayName`**
 
 The `display` name is the string that is displayed to the user in all text related to the exit. It is listed in the location's description.
 
-*`destination`*
+**`destination`**
 
 The `displayName` is a string that matches the key to another `location` within the `map`. When the user issues the `go` command and names this exit as the subject the room listed in `destination` is the location the player's `currentLocation` will be changed to.
 
