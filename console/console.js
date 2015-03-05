@@ -83,9 +83,10 @@ function loadCartridge(gameID, gameName){
 		return "Specify game cartridge to load.";
 	}
 	try {
-		var file = eval('require("../cartridges/'+gameName+'.js")');
-		file.gameData.gameID = gameID;
+		delete require.cache[require.resolve('../cartridges/'+gameName+'.js')];
+		var file = require('../cartridges/'+gameName+'.js');
 		games[gameID] = {gameData: file.gameData, gameActions: file.gameActions};
+		games[gameID].gameData.gameID = gameID;
 		return games[gameID].gameData.introText + '\n' + getLocationDescription(games[gameID].gameData);
 	} catch(error){
 		return "Could not load " + gameName;
@@ -212,6 +213,7 @@ var actions = {
 		try {
 			return getItem(game.player.inventory, command.subject).use();;
 		} catch (itemNotInInventoryError) {
+			console.log(itemNotInInventoryError);
 			return 'Can\'t do that.'
 		}
 	}
