@@ -162,7 +162,7 @@ The `displayName` of an item is the string used by the console in all text relat
 
 An item's `quantityy` must be a non-negative int. The `quantity` keeps track of how many of that specific item are contained within any given location of the player's inventory. The 'take' command causes the `quantity` to be decremented for the named item with the location's items object and incremented with the player's inventory. The `drop` command does the revers. If an item's quantity ever reaches zero it is deleted.
 
-**`use()` Function*
+**`use()` Function**
 
 The `use()` function will run then the user issues the 'use' command and names the item as the item as the subject. The use function an execute any arbitrary code but must return a string that will be displayed to the user.
 
