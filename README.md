@@ -106,7 +106,7 @@ A player's `inventory` is a collection of `items` that the `player` takes with t
 
 The `map` is a collection of `location` objects. It can also contain any number of other fields, objects and functions as needed by the cartridge.
 
-####`location` Objects
+#### `location` Objects
 
 Each `location` has a name/key and the follwoing attributes: `firstVisit`, `displayName`, `description`, an `interactables` object, and `items` object, and an `exits` object. It has three opitional functions that can be implemented if needed: `setup()`, `teardown()` and `updateLocation()`. It can also contain any number of other fields, objects and functions as needed by the cartridge.
 
