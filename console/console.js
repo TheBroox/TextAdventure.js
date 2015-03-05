@@ -88,7 +88,6 @@ function loadCartridge(gameID, gameName){
 		games[gameID] = {gameData: file.gameData, gameFunctions: file.gameFunctions};
 		return games[gameID].gameData.introText + '\n' + getLocationDescription(games[gameID].gameData);
 	} catch(error){
-		console.log(error);
 		return "Could not load " + gameName;
 	}
 }
