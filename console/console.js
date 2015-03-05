@@ -15,7 +15,7 @@ exports.input = function(input, gameID){
 	var command = parser.parse(input);
 	var game = games[gameID];
 	if(game){
-		var gameFunctions = game.gameFunctions;
+		var gameActions = game.gameActions;
 		game = game.gameData;
 		++game.commandCounter;
 		var returnString;
@@ -23,7 +23,7 @@ exports.input = function(input, gameID){
 		try {
 			try {
 				debug('---Attempting to run cartridge command "'+command.action+'"');
-				returnString = eval('gameFunctions.'+command.action+'(game,command,consoleInterface)');
+				returnString = eval('gameActions.'+command.action+'(game,command,consoleInterface)');
 			} catch(cartridgeCommandError) {
 				debug('-----'+cartridgeCommandError);
 				debug('---Attempting to run cartridge command "'+command.action+'"');
@@ -85,7 +85,7 @@ function loadCartridge(gameID, gameName){
 	try {
 		var file = eval('require("../cartridges/'+gameName+'.js")');
 		file.gameData.gameID = gameID;
-		games[gameID] = {gameData: file.gameData, gameFunctions: file.gameFunctions};
+		games[gameID] = {gameData: file.gameData, gameActions: file.gameActions};
 		return games[gameID].gameData.introText + '\n' + getLocationDescription(games[gameID].gameData);
 	} catch(error){
 		return "Could not load " + gameName;
@@ -93,7 +93,7 @@ function loadCartridge(gameID, gameName){
 }
 
 // ----------------------------\
-// === Game Commands ==================================================================================================
+// === Console Actions =================================================================================================
 // ----------------------------/
 var actions = {
 

@@ -63,8 +63,8 @@ exports.gameData = {
 	}
 };
 
-// === Game Functions ===
-exports.gameFunctions = {
+// === Game Actions ===
+exports.gameActions = {
 	take : function(game, command, consoleInterface){
 		return 'Cart: '+consoleInterface(game, command);
 	},
@@ -75,5 +75,5 @@ exports.gameFunctions = {
 
 // === Helper Functions ===
 function testFunction(){
-	return gameFunctions.test();
+	return gameActions.test();
 }
