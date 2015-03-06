@@ -64,7 +64,7 @@ Cartridges are loaded into the Console and are then playable by the user. The Co
 
 ### `gameData` Object
 
-The `gameData` object has four required components; a `commandCounter`, `introText`, a `player` object and a `map` object. It can also contain any number of other fields, objects and functions as needed by the cartridge. Below is bare-bones architecture of the `gameData` object.
+The `gameData` object has four required components; `commandCounter`, `gameOver`, `introText`, `outroText`, a `player` object and a `map` object. It can also contain any number of other fields, objects and functions as needed by the cartridge. Below is bare-bones architecture of the `gameData` object.
 
 ```javaScript
 exports.gameData = {
@@ -79,9 +79,17 @@ exports.gameData = {
 
 The `commandCounter` is an int that keeps track of the number of inputs the user has submitted to the console for evaluation on this particular cartridge. The `commandCounter` can be initialized to any integer depending on the cartridges needs. The console will increment the number by one each time it receives a command.
 
+#### `gameOver`
+
+`gameOver` is a required boolean. After finishing all executing all code related to any given command the console checks `gameOver`. If it is true the `outroText` is added to the end of the string sent to the console and the game is deleted. If it is false nothing happens.
+
 #### `introText`
 
 The console will display the `introText` to the user following a successful `load` command.
+
+#### `outroText`
+
+The `outroText` string is added to the string sent to the terminal by the console if after finishing executing a command the `gameOver` boolean is set to true.
 
 #### `player` Object
 

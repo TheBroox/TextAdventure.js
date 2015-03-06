@@ -48,11 +48,10 @@ exports.input = function(input, gameID){
 				debug('-----'+updateLocationError);
 			}
 		}
-		if(updateLocationString === undefined){
-			return returnString;
-		} else {
-			return updateLocationString;
+		if(updateLocationString !== undefined){
+			returnString = updateLocationString;
 		}
+		return checkForGameEnd(game, returnString);
 	} else {
 		console.log(gameID + ': no game');
 		if(command.action === 'load'){
@@ -223,6 +222,14 @@ var actions = {
 // ----------------------------\
 // === Helper Functions ===============================================================================================
 // ----------------------------/
+function checkForGameEnd(game, returnString){
+	if(game.gameOver){
+	returnString = returnString + '\n' + game.outroText;
+		actions.die(game,{action:'die'});
+	} 
+	return returnString;
+}
+
 function clone(obj) {
     if(obj == null || typeof(obj) != 'object'){
         return obj;
