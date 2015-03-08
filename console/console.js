@@ -212,7 +212,6 @@ var actions = {
 		try {
 			return getItem(game.player.inventory, command.subject).use();;
 		} catch (itemNotInInventoryError) {
-			console.log(itemNotInInventoryError);
 			return 'Can\'t do that.'
 		}
 	}
@@ -253,6 +252,40 @@ function debug(debugText){
 	}
 }
 
+function exitsToString(exitsObject){
+	var numOfExits = Object.keys(exitsObject).length;
+	if(numOfExits === 0){
+		return '';
+	}
+	var visibleExits = [];
+	for(var exit in exitsObject){
+		var exitObject = exitsObject[exit];
+		if(!exitObject.hidden){
+			visibleExits.push(exitObject.displayName);
+		}
+	}
+	switch(visibleExits.length){
+		case 0:
+			return '';
+		case 	1:
+			var returnString = ' Exit is ';
+			break;
+		default :
+			var returnString = ' Exits are ';
+	}
+	for(i=0; i<visibleExits.length; ++i){
+		returnString = returnString.concat(visibleExits[i]);
+		if(i === visibleExits.length-2){
+			returnString = returnString.concat(' and ');
+		} else if (i === visibleExits.length-1){
+			returnString = returnString.concat('.');
+		} else {
+			returnString = returnString.concat(', ');
+		}
+	}
+	return returnString;
+}
+
 function getCurrentLocation(game){
 	return game.map[game.player.currentLocation];
 }
@@ -262,30 +295,12 @@ function getLocationDescription(game, forcedLongDescription){
 	var description;
 	if(currentLocation.firstVisit || forcedLongDescription){
 		description = currentLocation.description;
-		for(var item in currentLocation.items){
-			var itemObject = currentLocation.items[item];
-			if(!itemObject.hidden){
-				if(itemObject.quantity > 1){
-					description = description.concat(' There are '+itemObject.quantity+' '+itemObject.displayName+'s here.');
-				} else {
-					description = description.concat(' There is a '+itemObject.displayName+' here.');
-				}
-			}
+		if(currentLocation.items){
+			description = description.concat(itemsToString(currentLocation.items));
 		}
-		var exitString = ' Exits are';
-		var exitCount = 1;
-		for(var exit in currentLocation.exits){
-			var exitObject = currentLocation.exits[exit];
-			switch (exitCount){
-				case 1 :
-					exitString = exitString.concat(' '+exitObject.displayName);
-					break;
-				default :
-					exitString = exitString.concat(', '+exitObject.displayName);
-			}
-			++exitCount;
+		if(currentLocation.exits){
+			description = description.concat(exitsToString(currentLocation.exits));
 		}
-		description = description.concat(exitString.concat('.'));
 	} else {
 		description = currentLocation.displayName;
 	}
@@ -306,6 +321,43 @@ function getItemName(itemLocation, itemName){
 			}
 		}
 	}
+}
+
+function itemsToString(itemsObject){
+	var numOfItems = Object.keys(itemsObject).length;
+	if(numOfItems === 0){
+		return '';
+	}
+	var visibleItems = [];
+	for(var item in itemsObject){
+		var itemObject = itemsObject[item];
+		if(!itemObject.hidden){
+			visibleItems.push({name:itemObject.displayName, quantity:itemObject.quantity});
+		}
+	}
+	if(visibleItems.length === 0){
+		return '';
+	}
+	if(visibleItems[0].quantity === 1){
+		var returnString = ' There is ';
+	} else {
+		var returnString = ' There are ';
+	}
+	for(i=0; i<visibleItems.length; ++i){
+		if(visibleItems[i].quantity > 1){
+			returnString = returnString.concat(visibleItems[i].quantity+' '+visibleItems[i].name+'s');
+		} else {
+			returnString = returnString.concat('a '+visibleItems[i].name);
+		}
+		if(i === visibleItems.length-2){
+			returnString = returnString.concat(' and ');
+		} else if (i === visibleItems.length-1){
+			returnString = returnString.concat(' here.');
+		} else {
+			returnString = returnString.concat(', ');
+		}
+	}
+	return returnString;
 }
 
 function interact(game, interaction, subject){
