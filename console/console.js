@@ -67,7 +67,7 @@ exports.input = function(input, gameID){
 // ----------------------------/
 function listCartridges(){
 	var cartridges = fileSystem.readdirSync('./cartridges/');
-	var cartridgesFormated = 'Avaliable Games: \n';
+	var cartridgesFormated = 'Available Games: \n';
 	for(var i = 0; i < cartridges.length; i++){
 		cartridgesFormated = cartridgesFormated.concat(cartridges[i].substr(0,cartridges[i].lastIndexOf('.')));
 		if(i < cartridges.length-1){

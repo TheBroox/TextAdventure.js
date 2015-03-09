@@ -60,13 +60,7 @@ var gameData = {
 
 // === Game Actions ===
 var gameActions = {
-	die : function(game, command, consoleInterface){
-		if(hasGameEnded()){
 
-		} else {
-			return consoleInterface(game, command);
-		}
-	}
 }
 
 // === Necessary Exports ===
@@ -85,5 +79,5 @@ function end(){
 
 function useLightSource(){
 	gameData.player.lightSource = true;
-	return 'You click on the light attached to the helemt.'
+	return 'You click on the light attached to the helmet.'
 }
