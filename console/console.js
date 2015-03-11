@@ -176,20 +176,20 @@ var actions = {
 
 	look : function(game, command){
 		if(!command.subject){
-			return getLocationDescription(game, true);
+			return {message: getLocationDescription(game, true), sucess: true};
 		}
 		try {
 			try {
-				return getItem(game.player.inventory, command.subject).description;
+				return {message: getItem(game.player.inventory, command.subject).description, sucess: true};
 			} catch (itemNotInInventoryError){
-				return getItem(getCurrentLocation(game).items, command.subject).description;
+				return {message: getItem(getCurrentLocation(game).items, command.subject).description, sucess: true};
 			}
 		} catch(isNotAnItemError) {
 			try {
-				return interact(game, 'look', command.subject);
+				return {message: interact(game, 'look', command.subject), sucess: true};
 			} catch(subjectNotFound
 				) {
-				return 'There is nothing important about the '+command.subject+'.';
+				return {message: 'There is nothing important about the '+command.subject+'.', sucess: false};
 			}
 		}
 	},
