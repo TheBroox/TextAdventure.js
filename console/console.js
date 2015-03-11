@@ -27,7 +27,7 @@ exports.input = function(input, gameID){
 			} catch(cartridgeCommandError) {
 				debug('-----'+cartridgeCommandError);
 				debug('---Attempting to run cartridge command "'+command.action+'"');
-				returnString = eval('actions.'+command.action+'(game,command)');
+				returnString = eval('actions.'+command.action+'(game,command)').message;
 			}
 		} catch(consoleCommandError){
 			try {
