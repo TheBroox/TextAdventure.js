@@ -104,7 +104,7 @@ var actions = {
 
 	die : function(game, command){
 		delete games[game.gameID];
-		return 'You are dead';
+		return {message:'You are dead', sucess: true};
 	},
 
 	drop : function(game, command){
