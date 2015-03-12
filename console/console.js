@@ -109,19 +109,19 @@ var actions = {
 
 	drop : function(game, command){
 		if(!command.subject){
-			return 'What do you want to drop?';
+			return {message: 'What do you want to drop?', success: false};
 		}
 		try{
-			return interact(game, 'drop', command.subject);
+			return {message: interact(game, 'drop', command.subject), success: true};
 		} catch(error) {
 			try {
 				var currentLocation = getCurrentLocation(game);
 				moveItem(command.subject, game.player.inventory, currentLocation.items);
 				var item = getItem(currentLocation.items, command.subject);
 				item.hidden = false;
-				return command.subject + ' dropped';
+				return {message: command.subject + ' dropped', success: true};
 			} catch(error2){
-				return 'You do not have a ' + command.subject + ' to drop.';
+				return {message: 'You do not have a ' + command.subject + ' to drop.', success: false};
 			}
 		}
 	},
@@ -211,12 +211,12 @@ var actions = {
 
 	use : function(game, command){
 		if(!command.subject){
-			return 'What would you like to use?';
+			return {message: 'What would you like to use?', success: false};
 		}
 		try {
-			return getItem(game.player.inventory, command.subject).use();;
+			return {message: getItem(game.player.inventory, command.subject).use(), success: true};
 		} catch (itemNotInInventoryError) {
-			return 'Can\'t do that.'
+			return {message: 'Can\'t do that.', success: false};
 		}
 	}
 };
