@@ -49,7 +49,7 @@ $(function(){
 // ===== Functions ======================================================================
 // ----- Send Message to Server ---------------------------------------------------------
 function messageServer(message){
-	$.post('http://localhost:3000/console', {"input": message}, function(data) {
+	$.post(window.location.href+'console', {"input": message}, function(data) {
 		toScreen(data.response,'console');
 	}).fail(function(){
 		toScreen('Unable to reach server.','terminal');
