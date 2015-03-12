@@ -167,9 +167,9 @@ var actions = {
 			inventoryList = inventoryList.concat('\n'+itemName);
 		}
 		if (inventoryList === 'Your inventory contains:'){
-			return 'Your inventory is empty.';
+			return {message: 'Your inventory is empty.', sucess: true};
 		} else {
-			return inventoryList;
+			return {message: inventoryList, sucess: true};
 		}
 	},
 
