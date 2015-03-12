@@ -128,23 +128,22 @@ var actions = {
 
 	go : function(game, command){
 		if(!command.subject){
-			return 'Where do you want to go?';
+			return {message: 'Where do you want to go?', sucess: false};
 		}
 		var exits = getCurrentLocation(game).exits;
 		var playerDestination = null
 		try {
 			playerDestination = exits[command.subject].destination;
 		} catch (error) {
-			try {
-				for(var exit in exits){
-					var exitObject = exits[exit];
-					if(exitObject.displayName.toLowerCase() === command.subject){
-						playerDestination = exitObject.destination;
-					}
+			for(var exit in exits){
+				var exitObject = exits[exit];
+				if(exitObject.displayName.toLowerCase() === command.subject){
+					playerDestination = exitObject.destination;
 				}
-			} catch (error2) {
-				return 'You can\'t go there';
 			}
+		}
+		if(playerDestination === null){
+			return {message: 'You can\'t go there.', sucess: false};
 		}
 		getCurrentLocation(game).firstVisit = false;
 		if (getCurrentLocation(game).teardown !== undefined){
@@ -154,7 +153,7 @@ var actions = {
 			game.map[playerDestination].setup();
 		}
 		game.player.currentLocation = playerDestination;
-		return getLocationDescription(game);
+		return {message: getLocationDescription(game), sucess: true};
 	},
 
 	inventory : function(game, command){
