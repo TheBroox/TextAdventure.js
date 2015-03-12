@@ -104,7 +104,7 @@ var actions = {
 
 	die : function(game, command){
 		delete games[game.gameID];
-		return {message:'You are dead', sucess: true};
+		return {message:'You are dead', success: true};
 	},
 
 	drop : function(game, command){
@@ -128,7 +128,7 @@ var actions = {
 
 	go : function(game, command){
 		if(!command.subject){
-			return {message: 'Where do you want to go?', sucess: false};
+			return {message: 'Where do you want to go?', success: false};
 		}
 		var exits = getCurrentLocation(game).exits;
 		var playerDestination = null
@@ -143,7 +143,7 @@ var actions = {
 			}
 		}
 		if(playerDestination === null){
-			return {message: 'You can\'t go there.', sucess: false};
+			return {message: 'You can\'t go there.', success: false};
 		}
 		getCurrentLocation(game).firstVisit = false;
 		if (getCurrentLocation(game).teardown !== undefined){
@@ -153,7 +153,7 @@ var actions = {
 			game.map[playerDestination].setup();
 		}
 		game.player.currentLocation = playerDestination;
-		return {message: getLocationDescription(game), sucess: true};
+		return {message: getLocationDescription(game), success: true};
 	},
 
 	inventory : function(game, command){
@@ -167,44 +167,44 @@ var actions = {
 			inventoryList = inventoryList.concat('\n'+itemName);
 		}
 		if (inventoryList === 'Your inventory contains:'){
-			return {message: 'Your inventory is empty.', sucess: true};
+			return {message: 'Your inventory is empty.', success: true};
 		} else {
-			return {message: inventoryList, sucess: true};
+			return {message: inventoryList, success: true};
 		}
 	},
 
 	look : function(game, command){
 		if(!command.subject){
-			return {message: getLocationDescription(game, true), sucess: true};
+			return {message: getLocationDescription(game, true), success: true};
 		}
 		try {
 			try {
-				return {message: getItem(game.player.inventory, command.subject).description, sucess: true};
+				return {message: getItem(game.player.inventory, command.subject).description, success: true};
 			} catch (itemNotInInventoryError){
-				return {message: getItem(getCurrentLocation(game).items, command.subject).description, sucess: true};
+				return {message: getItem(getCurrentLocation(game).items, command.subject).description, success: true};
 			}
 		} catch(isNotAnItemError) {
 			try {
-				return {message: interact(game, 'look', command.subject), sucess: true};
+				return {message: interact(game, 'look', command.subject), success: true};
 			} catch(subjectNotFound
 				) {
-				return {message: 'There is nothing important about the '+command.subject+'.', sucess: false};
+				return {message: 'There is nothing important about the '+command.subject+'.', success: false};
 			}
 		}
 	},
 
 	take : function(game, command){
 		if(!command.subject){
-			return 'What do you want to take?';
+			return {message: 'What do you want to take?', success: false};
 		}
 		try{
-			return interact(game, 'take', command.subject);
+			return {message: interact(game, 'take', command.subject), success: true};
 		} catch(error) {
 			try {
 				moveItem(command.subject, getCurrentLocation(game).items, game.player.inventory);
-				return command.subject + ' taken';
+				return {message: command.subject + ' taken', success: true};
 			} catch(error2){
-				return 'Best just to leave the ' + command.subject + ' as it is.';
+				return {message: 'Best just to leave the ' + command.subject + ' as it is.', success: false};
 			}
 		}
 	},
