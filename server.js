@@ -14,7 +14,8 @@ app.use(express.static(__dirname + '/terminal'));
 app.use(session({secret: '1234567890QWERTY', resave: false, saveUninitialized: true}));
 
 // === Start Server ===
-var server = app.listen(3000, function(){
+var port = process.env.OPENSHIFT_NODEJS_PORT || 3000;
+var server = app.listen(port, function(){
 	console.log('Listening on port %d', server.address().port);
 });
 
