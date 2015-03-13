@@ -14,18 +14,17 @@ app.use(express.static(__dirname + '/terminal'));
 app.use(session({secret: '1234567890QWERTY', resave: false, saveUninitialized: true}));
 
 // === Start Server ===
-var server_port = process.env.OPENSHIFT_NODEJS_PORT || 3000;
-var server_ip_address = process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1'
-var server = app.listen(server_port, server_ip_address, function () {
-  console.log( "Listening on " + server_ip_address + ", server_port " + server_port )
+var port = process.env.OPENSHIFT_NODEJS_PORT || 3000;
+var server = app.listen(port, function(){
+	console.log('Listening on port %d', server.address().port);
 });
 
 // === Create Console ===
 var con = require('./console/console.js');
 
-// // === Open Browser ===
-// var open = require('open');
-// open('http://localhost:3000');
+// === Open Browser ===
+var open = require('open');
+open('http://localhost:3000');
 
 // === Respond to AJAX calls ===
 app.post('/console', function(req,res){
