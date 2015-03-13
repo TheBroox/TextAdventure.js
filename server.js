@@ -24,8 +24,8 @@ var server = app.listen(server_port, server_ip_address, function () {
 var con = require('./console/console.js');
 
 // // === Open Browser ===
-// var open = require('open');
-// open('http://localhost:3000');
+var open = require('open');
+open('http://localhost:3000');
 
 // === Respond to AJAX calls ===
 app.post('/console', function(req,res){
