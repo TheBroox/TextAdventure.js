@@ -176,7 +176,7 @@ The `use()` function will run then the user issues the 'use' command and names t
 
 **`interactions` Object**
 
-The `interactions` Object of an item is identical to an `interactable` item of a location except that it is tied to the item and will move with said item.
+The `interactions` Object of an item is identical to an `interactables` object of a location except that it is tied to the item and will move with said item.
 
 ##### `exits` Object
 
