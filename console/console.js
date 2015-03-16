@@ -365,8 +365,11 @@ function itemsToString(itemsObject){
 }
 
 function interact(game, interaction, subject){
-	//TODO search items in inventory
-	return getCurrentLocation(game).interactables[subject][interaction];
+	try{
+		return message: getCurrentLocation(game).items[subject].interactions[interaction];
+	} catch(error) {
+		return getCurrentLocation(game).interactables[subject][interaction];
+	}
 }
 
 function moveItem(itemName, startLocation, endLocation){

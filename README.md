@@ -152,7 +152,7 @@ The `items` objects is a collection of items contained within this location. An 
 
 ###### `item` Object
 
-`item` objects can exist in both a player's inventory or they can reside in the `items` object of a location. Users can use the `take` command to move an `item` from a location to the player's inventory. The `drop` command does the reverse. Items have some mandatory properties; namely, `description`, `displayName`, `hidden`, and `quantity`. Optionally, it can contain a `use` function. An `item` can also contain any number of additional properties or functions as dictated by the design of the game.
+`item` objects can exist in both a player's inventory or they can reside in the `items` object of a location. Users can use the `take` command to move an `item` from a location to the player's inventory. The `drop` command does the reverse. Items have some mandatory properties; namely, `description`, `displayName`, `hidden`, and `quantity`. Optionally, it can contain a `use` function and/or an `interactions` Object. An `item` can also contain any number of additional properties or functions as dictated by the design of the game.
 
 **`description`**
 
@@ -173,6 +173,10 @@ An item's `quantityy` must be a non-negative int. The `quantity` keeps track of 
 **`use()` Function**
 
 The `use()` function will run then the user issues the 'use' command and names the item as the item as the subject. The use function an execute any arbitrary code but must return a string that will be displayed to the user.
+
+**`interactions` Object**
+
+The `interactions` Object of an item is identical to an `interactable` item of a location except that it is tied to the item and will move with said item.
 
 ##### `exits` Object
 
