@@ -366,7 +366,7 @@ function itemsToString(itemsObject){
 
 function interact(game, interaction, subject){
 	try{
-		return message: getCurrentLocation(game).items[subject].interactions[interaction];
+		return message = getCurrentLocation(game).items[subject].interactions[interaction];
 	} catch(error) {
 		return getCurrentLocation(game).interactables[subject][interaction];
 	}
