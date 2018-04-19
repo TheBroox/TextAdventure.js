@@ -164,11 +164,11 @@ The `displayName` of an item is the string used by the console in all text relat
 
 **`hidden`**
 
-`hidden` is a boolean that if set to true will prevent the console from listing the item as in the location when constructing the location's description. Alternatively if `hidden` is set to true the item will be listed in the location's description.
+`hidden` is a boolean that if set to true will prevent the console from listing the item as in the location when constructing the location's description. Alternatively if `hidden` is set to false the item will be listed in the location's description.
 
 **`quantity`**
 
-An item's `quantityy` must be a non-negative int. The `quantity` keeps track of how many of that specific item are contained within any given location of the player's inventory. The 'take' command causes the `quantity` to be decremented for the named item with the location's items object and incremented with the player's inventory. The `drop` command does the revers. If an item's quantity ever reaches zero it is deleted.
+An item's `quantity` must be a non-negative int. The `quantity` keeps track of how many of that specific item are contained within any given location of the player's inventory. The 'take' command causes the `quantity` to be decremented for the named item with the location's items object and incremented with the player's inventory. The `drop` command does the revers. If an item's quantity ever reaches zero it is deleted.
 
 **`use()` Function**
 
