@@ -273,7 +273,7 @@ module.exports = function createConsole() {
 	}
 
 	function consoleInterface(game: any, command: any){
-		return actions[command.action](game, command); // eval('actions.'+command.action+'(game,command);')
+		return actions[command.action](game, command);
 	}
 
 	function debug(debugText: any){
