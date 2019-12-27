@@ -1,22 +1,18 @@
 {
   "compilerOptions": {
-    // "outDir": "./dist/",
+    "outDir": "./dist/",
     "noImplicitAny": true,
     "module": "commonjs",
     "target": "es5",
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "typeRoots": [
-        "shims",
+        "src/shims",
         "./node_modules/@types"
     ],
     "inlineSourceMap": true
   },
   "include": [
-    "builder/**/*",
-    "cartridges/**/*",
-    "console/**/*",
-    "server/**/*",
-    "terminal/js/**/*"
+    "src/**/*"
   ]
 }

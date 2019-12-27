@@ -1,4 +1,4 @@
-import { IGameData } from '../shims/textadventurejs.shim';
+import { IGameData, ICartridge } from '../shims/textadventurejs.shim';
 
 // === Game Data ===
 var gameData: IGameData = {
@@ -65,10 +65,6 @@ var gameActions = {
 
 }
 
-// === Necessary Exports ===
-module.exports.gameData = gameData;
-module.exports.gameActions = gameActions;
-
 // === Helper Functions ===
 function end(){
 	if(gameData.player.lightSource){
@@ -83,3 +79,11 @@ function useLightSource(){
 	gameData.player.lightSource = true;
 	return 'You click on the light attached to the helmet.'
 }
+
+
+const cartridge: ICartridge = {
+	gameData: gameData,
+	gameActions: gameActions
+}
+
+export = cartridge;

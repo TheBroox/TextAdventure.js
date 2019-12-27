@@ -10,8 +10,10 @@
   "license": "MIT License",
   "main": "server.js",
   "scripts": {
-    "build": "tsc",
-    "start": "node server/server.js"
+    "clean": "rimraf dist",
+    "build": "npm run clean && tsc && npm run copy",
+    "copy": "cd src && copyfiles -e **/*.ts terminal/**/*.* ../dist",
+    "start": "node dist/runners/http-server.runner.js"
   },
   "files": [
     "server.js",
@@ -36,6 +38,8 @@
     "open": "^7.0.0"
   },
   "devDependencies": {
+    "copyfiles": "^2.1.1",
+    "rimraf": "^3.0.0",
     "typescript": "^3.7.4"
   }
 }
