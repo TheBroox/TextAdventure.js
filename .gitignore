@@ -4,3 +4,4 @@ logs
 
 # Dependency directory
 node_modules
+console/console.js
