@@ -66,20 +66,18 @@ exports.input = function(input, gameID){
 // ----------------------------\
 // === Game Setup Functions ===========================================================================================
 // ----------------------------/
-function registerCartridge(name, cartridgeDefinition) {
+module.exports.registerCartridge = function registerCartridge(name, cartridgeDefinition) {
 	availableCartridges[name] = cartridgeDefinition;
 }
 
 function listCartridges(){
-	var cartridges = fileSystem.readdirSync('./cartridges/').filter(function(file){
-		return file && file[0] != '.' && file.endsWith('.js');
-	});
+	var cartridges = Object.keys(availableCartridges);
 	if (cartridges.length === 0){
 		return 'No game cartridges found.'
 	}
 	var cartridgesFormated = 'Available Games: \n';
 	for(var i = 0; i < cartridges.length; i++){
-		cartridgesFormated = cartridgesFormated.concat(cartridges[i].substr(0,cartridges[i].lastIndexOf('.')));
+		cartridgesFormated = cartridgesFormated.concat(cartridges[i]);
 		if(i < cartridges.length-1){
 			cartridgesFormated = cartridgesFormated.concat('\n');
 		}
