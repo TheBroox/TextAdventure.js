@@ -1,4 +1,4 @@
-import { ICartridge, ICommand, ConsoleInterfaceFn, IGameData } from "../shims/textadventurejs.shim";
+import { ICartridge, ICommand, ConsoleInterfaceFn, IGameData } from '../shims/textadventurejs.shim';
 
 const cartridge: ICartridge = {
     gameData: {

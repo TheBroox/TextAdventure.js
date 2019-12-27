@@ -2,7 +2,7 @@
 var fileSystem = require('fs');
 var parser = require('./parser.js');
 
-module.exports = function createConsole() {
+export default function createConsole() {
 
 	// === Create Necessary Variables ===
 	var debugMode = true;
