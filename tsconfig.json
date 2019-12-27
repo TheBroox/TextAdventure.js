@@ -16,6 +16,7 @@
     "builder/**/*",
     "cartridges/**/*",
     "console/**/*",
-    "server/**/*"
+    "server/**/*",
+    "terminal/js/**/*"
   ]
 }
