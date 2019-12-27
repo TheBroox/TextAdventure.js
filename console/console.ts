@@ -1,8 +1,11 @@
 // === Import Necessary Functionality ===
 var fileSystem = require('fs');
-var parser = require('./parser.js');
+import { DefaultParser } from './default.parser';
+import { IParser } from './parser';
 
-export default function createConsole() {
+export default function createConsole(parser?: IParser) {
+
+	parser = parser || new DefaultParser();
 
 	// === Create Necessary Variables ===
 	var debugMode = true;
