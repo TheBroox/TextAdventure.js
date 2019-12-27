@@ -4,7 +4,6 @@ import { Express } from 'express';
 import bodyParser from 'body-parser';
 import session from 'express-session';
 import createConsole from '../console/console';
-import path from 'path';
 
 import { ICartridge } from '../shims/textadventurejs.shim';
 
@@ -16,19 +15,16 @@ export interface IServerOptions {
 
 export class ConsoleHttpServer {
 
-  private _options?: IServerOptions = {};
+  private _options: IServerOptions = {};
   private _middleware?: Handler[];
   private _app: Express;
   private _cartridges: { [cartridgeName: string]: ICartridge };
 
-  constructor(options?: IServerOptions) {
+  constructor(options: IServerOptions) {
 
     this._middleware = [];
     this._cartridges = {};
-
-    if (options) {
-      this._options = options;
-    }
+    this._options = options;
   }
 
   private configure(): void {
@@ -79,8 +75,8 @@ export class ConsoleHttpServer {
 
     this.configure();
 
-    const port = this._options.port || 3000;
-    const ipAddress = this._options.ipAddress || '127.0.0.1';
+    const port = this._options.port;
+    const ipAddress = this._options.ipAddress;
 
     this._app.listen(port, ipAddress, function () {
       console.log( "Listening on " + ipAddress + ", server_port " + port);

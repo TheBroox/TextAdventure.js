@@ -1,4 +1,4 @@
-import { IGameData, ICartridge } from '../shims/textadventurejs.shim';
+import { IGameData, ICartridge } from '../core/shims/textadventurejs.shim';
 
 // === Game Data ===
 var gameData: IGameData = {

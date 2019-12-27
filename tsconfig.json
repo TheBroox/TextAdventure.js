@@ -7,7 +7,7 @@
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "typeRoots": [
-        "src/shims",
+        "src/core/shims",
         "./node_modules/@types"
     ],
     "inlineSourceMap": true
