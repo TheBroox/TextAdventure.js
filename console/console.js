@@ -215,22 +215,6 @@ var actions = {
 		}
 
 		return { message: interactionMessage, success: true };
-
-		try {
-			try {
-				return {message: getItem(game.player.inventory, command.subject).description, success: true};
-			} catch (itemNotInInventoryError){
-				debug(`Look: itemNotInInventoryError: ${itemNotInInventoryError}`);
-				return {message: getItem(getCurrentLocation(game).items, command.subject).description, success: true};
-			}
-		} catch(isNotAnItemError) {
-			try {
-				return {message: interactWithSubjectInCurrentLocation(game, 'look', command.subject), success: true};
-			} catch(subjectNotFound) {
-				debug(`Look: isNotAnItemError: ${subjectNotFound}`);
-				return {message: 'There is nothing important about the '+command.subject+'.', success: false};
-			}
-		}
 	},
 
 	take : function(game, command) {
@@ -439,20 +423,24 @@ function interactWithSubjectInCurrentLocation(game, interaction, subject) {
 	}
 
 	return;
+}
 
-	var customInteractionsForItem = getCurrentLocation(game).items[subject].interactions;
-	
-	if (customInteractionsForItem && customInteractionsForItem[interaction]) {
-		return message = customInteractionsForItem[interaction];
-	}
+function isItemInPlayerInventory(game, itemName) {
+	return !!(game.player.inventory && game.player.inventory[itemName]);
+}
 
-	return getCurrentLocation(game).interactables[subject][interaction];
+function isItemInCurrentLocation(game, itemName) {
 
-	try{
-		return message = getCurrentLocation(game).items[subject].interactions[interaction];
-	} catch(error) {
-		return getCurrentLocation(game).interactables[subject][interaction];
-	}
+	var currentLocation = getCurrentLocation(game);
+
+	return !!(currentLocation.items && currentLocation.items[itemName]);
+}
+
+function isInteractableInCurrentLocation(game, interactibleName) {
+
+	var currentLocation = getCurrentLocation(game);
+
+	return !!(currentLocation.interactables && currentLocation.interactables[itemName]);
 }
 
 function moveItem(itemName, startLocation, endLocation){
