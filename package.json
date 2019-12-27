@@ -10,6 +10,7 @@
   "license": "MIT License",
   "main": "server.js",
   "scripts": {
+    "build": "tsc",
     "start": "node server.js"
   },
   "files": [
@@ -24,9 +25,13 @@
     "url": "https://github.com/TheBroox/TextAdventure.js"
   },
   "dependencies": {
+    "@types/node": "^13.1.1",
     "body-parser": "^1.12.0",
     "express": "^4.12.0",
     "express-session": "^1.10.3",
-    "open": "^0.0.5"
+    "open": "^7.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^3.7.4"
   }
 }

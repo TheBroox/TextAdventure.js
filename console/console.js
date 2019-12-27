@@ -7,6 +7,7 @@ var parser = require('./parser.js');
 
 // === Creat Necessary Variables ===
 var games = {};
+var availableCartridges = {};
 
 // ----------------------------\
 // === Main Function ==================================================================================================
@@ -65,9 +66,13 @@ exports.input = function(input, gameID){
 // ----------------------------\
 // === Game Setup Functions ===========================================================================================
 // ----------------------------/
+function registerCartridge(name, cartridgeDefinition) {
+	availableCartridges[name] = cartridgeDefinition;
+}
+
 function listCartridges(){
 	var cartridges = fileSystem.readdirSync('./cartridges/').filter(function(file){
-		return file && file[0] != '.';
+		return file && file[0] != '.' && file.endsWith('.js');
 	});
 	if (cartridges.length === 0){
 		return 'No game cartridges found.'
