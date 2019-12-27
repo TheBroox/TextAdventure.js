@@ -1,5 +1,5 @@
 // === Debug Variable ===
-var debugMode = false;
+var debugMode = true;
 
 // === Import Necessary Functionality ===
 var fileSystem = require('fs');
@@ -24,17 +24,19 @@ exports.input = function(input, gameID){
 		try {
 			try {
 				debug('---Attempting to run cartridge command "'+command.action+'"');
-				returnString = eval('gameActions.'+command.action+'(game,command,consoleInterface)');
+				returnString = gameActions[command.action](game, command, consoleInterface); // eval('gameActions.'+command.action+'(game,command,consoleInterface)');
+				// returnString = eval('gameActions.'+command.action+'(game,command,consoleInterface)');
 			} catch(cartridgeCommandError) {
 				debug('-----'+cartridgeCommandError);
 				debug('---Attempting to run cartridge command "'+command.action+'"');
-				returnString = eval('actions.'+command.action+'(game,command)').message;
+				returnString = actions[command.action](game, command).message;  // eval('actions.'+command.action+'(game,command)').message;
+				// returnString = eval('actions.'+command.action+'(game,command)').message;
 			}
 		} catch(consoleCommandError){
 			try {
 				debug('-----'+consoleCommandError);
 				debug('---Attempting to perform '+command.action+' interaction');
-				returnString = interact(game, command.action, command.subject);
+				returnString = interactWithSubjectInCurrentLocation(game, command.action, command.subject);
 			} catch (interactionError) {
 				debug('-----'+interactionError);
 			}
@@ -92,16 +94,12 @@ function loadCartridge(gameID, gameName){
 	if (!availableCartridges[gameName]) {
 		return `Cartridge ${gameName} not found.`;
 	}
-	try {
-		// delete require.cache[require.resolve('../cartridges/'+gameName+'.js')];
-		// var file = require('../cartridges/'+gameName+'.js');
-		var file = availableCartridges[gameName];
-		games[gameID] = {gameData: file.gameData, gameActions: file.gameActions};
-		games[gameID].gameData.gameID = gameID;
-		return games[gameID].gameData.introText + '\n' + getLocationDescription(games[gameID].gameData);
-	} catch(error){
-		return "Could not load " + gameName;
-	}
+	
+	var file = availableCartridges[gameName];
+
+	games[gameID] = {gameData: file.gameData, gameActions: file.gameActions};
+	games[gameID].gameData.gameID = gameID;
+	return games[gameID].gameData.introText + '\n' + getLocationDescription(games[gameID].gameData);
 }
 
 // ----------------------------\
@@ -109,6 +107,7 @@ function loadCartridge(gameID, gameName){
 // ----------------------------/
 var actions = {
 
+	// verified
 	die : function(game, command){
 		delete games[game.gameID];
 		return {message:'You are dead', success: true};
@@ -119,7 +118,7 @@ var actions = {
 			return {message: 'What do you want to drop?', success: false};
 		}
 		try{
-			return {message: interact(game, 'drop', command.subject), success: true};
+			return {message: interactWithSubjectInCurrentLocation(game, 'drop', command.subject), success: true};
 		} catch(error) {
 			try {
 				var currentLocation = getCurrentLocation(game);
@@ -163,6 +162,7 @@ var actions = {
 		return {message: getLocationDescription(game), success: true};
 	},
 
+	// verified
 	inventory : function(game, command){
 		var inventoryList = 'Your inventory contains:';
 		for (var item in game.player.inventory){
@@ -180,37 +180,72 @@ var actions = {
 		}
 	},
 
-	look : function(game, command){
+	// verified
+	look : function(game, command) {
+
 		if(!command.subject){
 			return {message: getLocationDescription(game, true), success: true};
 		}
+
+		var isInventoryItem = !!(game.player.inventory[command.subject]);
+
+		if (isInventoryItem) {
+			debug(`Subject ${command.subject} is an item in the player inventory`);
+			return {message: getItem(game.player.inventory, command.subject).description, success: true};
+		}
+
+		var isCurrentLocationItem = !!(getCurrentLocation(game).items[command.subject]);
+
+		if (isCurrentLocationItem) {
+			debug(`Subject ${command.subject} is an item in the current location`);
+			return {message: getItem(getCurrentLocation(game).items, command.subject).description, success: true};
+		}
+
+		var interactionMessage = undefined;
+
+		try {
+			interactionMessage = interactWithSubjectInCurrentLocation(game, 'look', command.subject);
+		} catch (e) {
+			debug(`Interaction error: ${e}`);
+		}
+
+		if (!interactionMessage) {
+			debug(`No interaction message specified for command 'look' and subject '${command.subject}'`);
+			return { message: 'There is nothing important about the '+ command.subject+ '.', success: false };
+		}
+
+		return { message: interactionMessage, success: true };
+
 		try {
 			try {
 				return {message: getItem(game.player.inventory, command.subject).description, success: true};
 			} catch (itemNotInInventoryError){
+				debug(`Look: itemNotInInventoryError: ${itemNotInInventoryError}`);
 				return {message: getItem(getCurrentLocation(game).items, command.subject).description, success: true};
 			}
 		} catch(isNotAnItemError) {
 			try {
-				return {message: interact(game, 'look', command.subject), success: true};
-			} catch(subjectNotFound
-				) {
+				return {message: interactWithSubjectInCurrentLocation(game, 'look', command.subject), success: true};
+			} catch(subjectNotFound) {
+				debug(`Look: isNotAnItemError: ${subjectNotFound}`);
 				return {message: 'There is nothing important about the '+command.subject+'.', success: false};
 			}
 		}
 	},
 
-	take : function(game, command){
+	take : function(game, command) {
 		if(!command.subject){
 			return {message: 'What do you want to take?', success: false};
 		}
 		try{
-			return {message: interact(game, 'take', command.subject), success: true};
+			return {message: interactWithSubjectInCurrentLocation(game, 'take', command.subject), success: true};
 		} catch(error) {
+			debug(`Take: interact error: ${error}`);
 			try {
 				moveItem(command.subject, getCurrentLocation(game).items, game.player.inventory);
 				return {message: command.subject + ' taken', success: true};
 			} catch(error2){
+				debug(`Take: moveItem error: ${error2}`);
 				return {message: 'Best just to leave the ' + command.subject + ' as it is.', success: false};
 			}
 		}
@@ -254,7 +289,7 @@ function clone(obj) {
 }
 
 function consoleInterface(game, command){
-	return eval('actions.'+command.action+'(game,command);')
+	return actions[command.action](game, command); // eval('actions.'+command.action+'(game,command);')
 }
 
 function debug(debugText){
@@ -371,7 +406,48 @@ function itemsToString(itemsObject){
 	return returnString;
 }
 
-function interact(game, interaction, subject){
+function interactWithSubjectInCurrentLocation(game, interaction, subject) {
+
+	var currentLocation = getCurrentLocation(game);
+	var itemsForCurrentLocation = currentLocation.items;
+	var interactablesForCurrentLocation = currentLocation.interactables;
+
+	var subjectIsItem = !!(itemsForCurrentLocation[subject]);
+	var subjectIsInteractable = !!(interactablesForCurrentLocation[subject]);
+
+	if (subjectIsItem) {
+
+		var item = itemsForCurrentLocation[subject];
+		var customInteractionsForItem = item.interactions;
+
+		if (!customInteractionsForItem || !(customInteractionsForItem[interaction])) {
+			throw new Error(`Item ${subject} doesn't have a custom interaction defined for ${interaction}`);
+		}
+
+		return customInteractionsForItem[interaction];
+	}
+
+	if (subjectIsInteractable) {
+
+		var interactible = interactablesForCurrentLocation[subject]
+
+		return interactible[interaction];
+	}
+
+	if (!subjectIsInteractable && !subjectIsItem) {
+		throw new Error(`Subject '${subject}' is neither an interactible or an item for current location`);
+	}
+
+	return;
+
+	var customInteractionsForItem = getCurrentLocation(game).items[subject].interactions;
+	
+	if (customInteractionsForItem && customInteractionsForItem[interaction]) {
+		return message = customInteractionsForItem[interaction];
+	}
+
+	return getCurrentLocation(game).interactables[subject][interaction];
+
 	try{
 		return message = getCurrentLocation(game).items[subject].interactions[interaction];
 	} catch(error) {
