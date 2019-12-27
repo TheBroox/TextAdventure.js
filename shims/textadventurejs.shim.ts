@@ -58,8 +58,10 @@ export interface IExit {
 }
 
 export interface IGameActions {
-    [actionName: string]: (game: ICartridge, command: ICommand, consoleInterface: (game :ICartridge, command: ICommand) => IGameActionResult) => IGameActionResult;
+    [actionName: string]: (gameData: IGameData, command: ICommand, consoleInterface: ConsoleInterfaceFn) => IGameActionResult | string;
 }
+
+export type ConsoleInterfaceFn = (gameData: IGameData, command: ICommand) => IGameActionResult;
 
 export interface IGameActionResult {
 

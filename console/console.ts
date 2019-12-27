@@ -67,9 +67,6 @@ module.exports = function createConsole() {
 	// === Game Setup Functions ===========================================================================================
 	// ----------------------------/
 	function registerCartridge(name: any, cartridgeDefinition: any) {
-		console.log(`cartridge name: ${name}`);
-		console.log('cartridgeDefinition:');
-		console.log(cartridgeDefinition);
 		availableCartridges[name] = cartridgeDefinition;
 	}
 
@@ -98,12 +95,6 @@ module.exports = function createConsole() {
 		
 		var file = availableCartridges[gameName];
 
-		console.log('gameID:');
-		console.log(gameID);
-
-		console.log('all games:');
-		console.log(games);
-
 		games[gameID] = {gameData: file.gameData, gameActions: file.gameActions};
 		games[gameID].gameData.gameID = gameID;
 		return games[gameID].gameData.introText + '\n' + getLocationDescription(games[gameID].gameData);
@@ -114,7 +105,6 @@ module.exports = function createConsole() {
 	// ----------------------------/
 	var actions: any = {
 
-		// verified
 		die : function(game: any, command: any){
 			delete games[game.gameID];
 			return {message:'You are dead', success: true};
@@ -169,7 +159,6 @@ module.exports = function createConsole() {
 			return {message: getLocationDescription(game), success: true};
 		},
 
-		// verified
 		inventory : function(game: any, command: any){
 			var inventoryList = 'Your inventory contains:';
 			for (var item in game.player.inventory){
@@ -187,7 +176,6 @@ module.exports = function createConsole() {
 			}
 		},
 
-		// verified
 		look : function(game: any, command: any) {
 
 			if(!command.subject){

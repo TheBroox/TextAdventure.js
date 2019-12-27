@@ -1,4 +1,4 @@
-import { ICartridge } from "../shims/textadventurejs.shim";
+import { ICartridge, ICommand, ConsoleInterfaceFn, IGameData } from "../shims/textadventurejs.shim";
 
 const cartridge: ICartridge = {
     gameData: {
@@ -39,7 +39,15 @@ const cartridge: ICartridge = {
         }
     },
     gameActions: {
-        
+        vomit: (gameData: IGameData, command: ICommand, consoleInterface: ConsoleInterfaceFn) => {
+            return `Ai borat cu succes pe ${command.subject}`;
+        },
+        burp: (gameData: IGameData, command: ICommand) => {
+
+            gameData.player.burpCounter = gameData.player.burpCounter || 0;
+
+            return `You burped ${++gameData.player.burpCounter} times until now`;
+        }
     }
 };
 
