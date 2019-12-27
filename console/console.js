@@ -89,9 +89,13 @@ function loadCartridge(gameID, gameName){
 	if (!gameName){
 		return "Specify game cartridge to load.";
 	}
+	if (!availableCartridges[gameName]) {
+		return `Cartridge ${gameName} not found.`;
+	}
 	try {
-		delete require.cache[require.resolve('../cartridges/'+gameName+'.js')];
-		var file = require('../cartridges/'+gameName+'.js');
+		// delete require.cache[require.resolve('../cartridges/'+gameName+'.js')];
+		// var file = require('../cartridges/'+gameName+'.js');
+		var file = availableCartridges[gameName];
 		games[gameID] = {gameData: file.gameData, gameActions: file.gameActions};
 		games[gameID].gameData.gameID = gameID;
 		return games[gameID].gameData.introText + '\n' + getLocationDescription(games[gameID].gameData);
