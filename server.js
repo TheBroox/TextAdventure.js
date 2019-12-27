@@ -4,7 +4,9 @@ var debugMode = false;
 // === Initilize Express ===
 var express = require('express');
 var bodyParser = require('body-parser');
-var session = require('express-session')
+var session = require('express-session');
+var createConsole = require('./console/console.js');
+
 var app = express();
 
 // === Import Necessary Functionality ==
@@ -14,7 +16,7 @@ app.use(express.static(__dirname + '/terminal'));
 app.use(session({secret: '1234567890QWERTY', resave: false, saveUninitialized: true}));
 
 // === Create Console ===
-var con = require('./console/console.js');
+var con = createConsole();
 
 // === Register cartridges ===
 var goldMineCartridge = require('./cartridges/gold_mine');
