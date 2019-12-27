@@ -1,6 +1,3 @@
-// === Debug Variable ===
-var debugMode = true;
-
 // === Import Necessary Functionality ===
 var fileSystem = require('fs');
 var parser = require('./parser.js');
@@ -8,6 +5,7 @@ var parser = require('./parser.js');
 module.exports = function createConsole() {
 
 	// === Create Necessary Variables ===
+	var debugMode = true;
 	var games: any = {};
 	var availableCartridges: any = {};
 
@@ -69,6 +67,9 @@ module.exports = function createConsole() {
 	// === Game Setup Functions ===========================================================================================
 	// ----------------------------/
 	function registerCartridge(name: any, cartridgeDefinition: any) {
+		console.log(`cartridge name: ${name}`);
+		console.log('cartridgeDefinition:');
+		console.log(cartridgeDefinition);
 		availableCartridges[name] = cartridgeDefinition;
 	}
 
@@ -96,6 +97,12 @@ module.exports = function createConsole() {
 		}
 		
 		var file = availableCartridges[gameName];
+
+		console.log('gameID:');
+		console.log(gameID);
+
+		console.log('all games:');
+		console.log(games);
 
 		games[gameID] = {gameData: file.gameData, gameActions: file.gameActions};
 		games[gameID].gameData.gameID = gameID;

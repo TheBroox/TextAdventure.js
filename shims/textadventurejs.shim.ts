@@ -66,7 +66,7 @@ export interface IGameActionResult {
 }
 
 export interface ICommand {
-    action: any;
-    subject: any;
-    object: any;
+    action: string;
+    subject: string;
+    object: string;
 }

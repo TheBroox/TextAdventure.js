@@ -20,7 +20,10 @@ var con = createConsole();
 
 // === Register cartridges ===
 var goldMineCartridge = require('./cartridges/gold_mine');
+var jahmolxesCartridge = require('./cartridges/jahmolxes');
+
 con.registerCartridge('gold_mine', goldMineCartridge);
+con.registerCartridge('jahmolxes', jahmolxesCartridge);
 
 // === Start Server ===
 var server_port = process.env.OPENSHIFT_NODEJS_PORT || 3000;
