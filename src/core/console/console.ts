@@ -123,14 +123,14 @@ export default function createConsole(options?: IConsoleOptions, parser?: IParse
 	// ----------------------------/
 	var actions: any = {
 
-		die : function(game: IGameData, command: ICommand){
+		die: function(game: IGameData, command: ICommand): IGameActionResult {
 
 			delete games[game.gameID];
 
 			return { message: 'You are dead', success: true };
 		},
 
-		drop: function(game: IGameData, command: ICommand) {
+		drop: function(game: IGameData, command: ICommand): IGameActionResult {
 
 			if(!command.subject) {
 				return { message: 'What do you want to drop?', success: false };
@@ -199,7 +199,7 @@ export default function createConsole(options?: IConsoleOptions, parser?: IParse
 			return { message: getLocationDescription(game), success: true };
 		},
 
-		inventory : function(game: any, command: any){
+		inventory : function(game: any, command: any) {
 			var inventoryList = 'Your inventory contains:';
 			for (var item in game.player.inventory){
 				var itemObject = game.player.inventory[item];
@@ -216,7 +216,7 @@ export default function createConsole(options?: IConsoleOptions, parser?: IParse
 			}
 		},
 
-		look : function(game: any, command: any) {
+		look: function(game: IGameData, command: ICommand): IGameActionResult {
 
 			if(!command.subject) {
 				return {message: getLocationDescription(game, true), success: true};
@@ -248,10 +248,10 @@ export default function createConsole(options?: IConsoleOptions, parser?: IParse
 				return { message: 'There is nothing important about the '+ command.subject+ '.', success: false };
 			}
 
-			return { message: interactionMessage, success: true };
+			return { message: (interactionMessage || ''), success: true };
 		},
 
-		take: function(game: IGameData, command: ICommand) {
+		take: function(game: IGameData, command: ICommand): IGameActionResult {
 
 			if(!command.subject) {
 				return { message: 'What do you want to take?', success: false };
@@ -266,31 +266,26 @@ export default function createConsole(options?: IConsoleOptions, parser?: IParse
 				return { message: `Taken ${command.subject}`, success: true };
 			}
 
-			return {message: `Best just to leave the '${command.subject}' as it is.`, success: false};
-
-			try{
-				return {message: interactWithSubjectInCurrentLocation(game, 'take', command.subject), success: true};
-			} catch(error) {
-				debug(`Take: interact error: ${error}`);
-				try {
-					moveItem(command.subject, getCurrentLocation(game).items, game.player.inventory);
-					return {message: command.subject + ' taken', success: true};
-				} catch(error2){
-					debug(`Take: moveItem error: ${error2}`);
-					return {message: 'Best just to leave the ' + command.subject + ' as it is.', success: false};
-				}
-			}
+			return { message: `Cannot take '${command.subject}'.`, success: false };
 		},
 
-		use : function(game: any, command: any){
+		use: function(game: IGameData, command: ICommand): IGameActionResult {
+
 			if(!command.subject){
 				return {message: 'What would you like to use?', success: false};
 			}
-			try {
-				return {message: getItem(game.player.inventory, command.subject).use(), success: true};
-			} catch (itemNotInInventoryError) {
-				return {message: 'Can\'t do that.', success: false};
+
+			if (isItemInPlayerInventory(game, command.subject)) {
+				const item = getItem(game.player.inventory, command.subject);
+
+				if (typeof item.use === 'function') {
+					return { message: item.use(), success: true };
+				} else {
+					return { message: `Can't use '${command.subject}'`, success: false };
+				}
 			}
+
+			return { message: `You don't have a '${command.subject}' to use`, success: false };
 		}
 	};
 
@@ -460,9 +455,12 @@ export default function createConsole(options?: IConsoleOptions, parser?: IParse
 
 		if (subjectIsInteractable) {
 
-			var interactible = interactablesForCurrentLocation[subject]
+			var interactible = interactablesForCurrentLocation[subject];
+			var customInteraction = interactible[interaction];
 
-			return interactible[interaction];
+			return typeof customInteraction === 'function'
+				? customInteraction()
+				: customInteraction;
 		}
 
 		if (!subjectIsInteractable && !subjectIsItem) {
