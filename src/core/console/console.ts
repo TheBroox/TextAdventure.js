@@ -1,11 +1,17 @@
 import { DefaultParser } from './default.parser';
 import { IParser } from './parser';
+import { ICartridge } from '../shims/textadventurejs.shim';
 
 export interface IConsoleOptions {
 	debug?: boolean;
 }
 
-export default function createConsole(options?: IConsoleOptions, parser?: IParser) {
+export interface IConsole {
+	input(input: string, gameID: string): string;
+	registerCartridge(name: string, cartridgeDefinition: ICartridge): void;
+}
+
+export default function createConsole(options?: IConsoleOptions, parser?: IParser): IConsole {
 
 	parser = parser || new DefaultParser();
 	options = options || {};
@@ -16,7 +22,7 @@ export default function createConsole(options?: IConsoleOptions, parser?: IParse
 	// ----------------------------\
 	// === Main Function ==================================================================================================
 	// ----------------------------/
-	function input(input: any, gameID: any) {
+	function input(input: string, gameID: string) {
 		var command = parser.parse(input);
 		var game = games[gameID];
 		if(game){
