@@ -251,10 +251,23 @@ export default function createConsole(options?: IConsoleOptions, parser?: IParse
 			return { message: interactionMessage, success: true };
 		},
 
-		take : function(game: any, command: any) {
-			if(!command.subject){
-				return {message: 'What do you want to take?', success: false};
+		take: function(game: IGameData, command: ICommand) {
+
+			if(!command.subject) {
+				return { message: 'What do you want to take?', success: false };
 			}
+
+			if (canInteractWithSubjectInCurrentLocation(game, DefaultConsoleActons.take, command.subject)) {
+				return { message: interactWithSubjectInCurrentLocation(game, DefaultConsoleActons.take, command.subject), success: true };
+			}
+
+			if (isItemInCurrentLocation(game, command.subject)) {
+				moveItem(command.subject, getCurrentLocation(game).items, game.player.inventory);
+				return { message: `Taken ${command.subject}`, success: true };
+			}
+
+			return {message: `Best just to leave the '${command.subject}' as it is.`, success: false};
+
 			try{
 				return {message: interactWithSubjectInCurrentLocation(game, 'take', command.subject), success: true};
 			} catch(error) {
