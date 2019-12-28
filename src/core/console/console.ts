@@ -1,14 +1,15 @@
-// === Import Necessary Functionality ===
-var fileSystem = require('fs');
 import { DefaultParser } from './default.parser';
 import { IParser } from './parser';
 
-export default function createConsole(parser?: IParser) {
+export interface IConsoleOptions {
+	debug?: boolean;
+}
+
+export default function createConsole(options?: IConsoleOptions, parser?: IParser) {
 
 	parser = parser || new DefaultParser();
+	options = options || {};
 
-	// === Create Necessary Variables ===
-	var debugMode = true;
 	var games: any = {};
 	var availableCartridges: any = {};
 
@@ -23,7 +24,7 @@ export default function createConsole(parser?: IParser) {
 			game = game.gameData;
 			++game.commandCounter;
 			var returnString;
-			console.log(gameID + ': ' + game.commandCounter);
+			debug(gameID + ': ' + game.commandCounter);
 			try {
 				try {
 					debug('---Attempting to run cartridge command "'+command.action+'"');
@@ -57,7 +58,7 @@ export default function createConsole(parser?: IParser) {
 			}
 			return checkForGameEnd(game, returnString);
 		} else {
-			console.log(gameID + ': no game');
+			debug(gameID + ': no game');
 			if(command.action === 'load'){
 				return loadCartridge(gameID, command.subject);
 			} else {
@@ -275,7 +276,7 @@ export default function createConsole(parser?: IParser) {
 	}
 
 	function debug(debugText: any){
-		if(debugMode){
+		if(options.debug){
 			console.log(debugText);
 		}
 	}

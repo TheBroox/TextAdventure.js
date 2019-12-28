@@ -44,7 +44,9 @@ export class ConsoleHttpServer {
 
     this._app.use(session({secret: '1234567890QWERTY', resave: false, saveUninitialized: true}));
 
-    const con = createConsole();
+    const con = createConsole({
+      debug: true
+    });
 
     if (this._cartridges) {
       Object.keys(this._cartridges).forEach(cartridgeName => {
