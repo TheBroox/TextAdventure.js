@@ -127,7 +127,7 @@ export default function createConsole(options?: IConsoleOptions, parser?: IParse
 
 			delete games[game.gameID];
 
-			return { message:'You are dead', success: true };
+			return { message: 'You are dead', success: true };
 		},
 
 		drop: function(game: IGameData, command: ICommand) {
@@ -218,7 +218,7 @@ export default function createConsole(options?: IConsoleOptions, parser?: IParse
 
 		look : function(game: any, command: any) {
 
-			if(!command.subject){
+			if(!command.subject) {
 				return {message: getLocationDescription(game, true), success: true};
 			}
 
@@ -226,22 +226,21 @@ export default function createConsole(options?: IConsoleOptions, parser?: IParse
 
 			if (isInventoryItem) {
 				debug(`Subject ${command.subject} is an item in the player inventory`);
-				return {message: getItem(game.player.inventory, command.subject).description, success: true};
+				return { message: getItem(game.player.inventory, command.subject).description, success: true };
 			}
 
 			var isCurrentLocationItem = !!(getCurrentLocation(game).items[command.subject]);
 
 			if (isCurrentLocationItem) {
 				debug(`Subject ${command.subject} is an item in the current location`);
-				return {message: getItem(getCurrentLocation(game).items, command.subject).description, success: true};
+				return { message: getItem(getCurrentLocation(game).items, command.subject).description, success: true };
 			}
 
 			var interactionMessage = undefined;
 
-			try {
-				interactionMessage = interactWithSubjectInCurrentLocation(game, 'look', command.subject);
-			} catch (e) {
-				debug(`Interaction error: ${e}`);
+			if (canInteractWithSubjectInCurrentLocation(game, DefaultConsoleActons.look, command.subject)) {
+				debug(`Trying custom interaction with subject ${command.subject} in current location`);
+				interactionMessage = interactWithSubjectInCurrentLocation(game, DefaultConsoleActons.look, command.subject);
 			}
 
 			if (!interactionMessage) {
