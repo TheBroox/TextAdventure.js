@@ -1,6 +1,6 @@
 import { DefaultParser } from './default.parser';
 import { IParser } from './parser';
-import { ICartridge, IGameData, IGameActions, ILocation, IGameActionResult, ICommand } from '../shims/textadventurejs.shim';
+import { ICartridge, IGameData, IGameActions, ILocation, IGameActionResult, ICommand, DefaultConsoleActons } from '../shims/textadventurejs.shim';
 
 export interface IConsoleOptions {
 	debug?: boolean;
@@ -123,28 +123,37 @@ export default function createConsole(options?: IConsoleOptions, parser?: IParse
 	// ----------------------------/
 	var actions: any = {
 
-		die : function(game: any, command: any){
+		die : function(game: IGameData, command: ICommand){
+
 			delete games[game.gameID];
-			return {message:'You are dead', success: true};
+
+			return { message:'You are dead', success: true };
 		},
 
-		drop: function(game: any, command: any) {
+		drop: function(game: IGameData, command: ICommand) {
+
 			if(!command.subject) {
 				return { message: 'What do you want to drop?', success: false };
 			}
-			try{
-				return {message: interactWithSubjectInCurrentLocation(game, 'drop', command.subject), success: true};
-			} catch(error) {
-				try {
-					var currentLocation = getCurrentLocation(game);
-					moveItem(command.subject, game.player.inventory, currentLocation.items);
-					var item = getItem(currentLocation.items, command.subject);
-					item.hidden = false;
-					return {message: command.subject + ' dropped', success: true};
-				} catch(error2){
-					return {message: 'You do not have a ' + command.subject + ' to drop.', success: false};
-				}
+
+			if (canInteractWithSubjectInCurrentLocation(game, DefaultConsoleActons.drop, command.subject)) {
+				return { message: interactWithSubjectInCurrentLocation(game, DefaultConsoleActons.drop, command.subject), success: true };
 			}
+
+			if (isItemInPlayerInventory(game, command.subject)) {
+
+				const currentLocation = getCurrentLocation(game);
+
+				moveItem(command.subject, game.player.inventory, currentLocation.items);
+
+				const item = getItem(currentLocation.items, command.subject);
+
+				item.hidden = false;
+
+				return { message: `Dropped ${command.subject}`, success: true };
+			}
+
+			return { message: `You do not have a ${command.subject} to drop`, success: false };
 		},
 
 		go: function(game: IGameData, command: ICommand): IGameActionResult {
@@ -487,7 +496,7 @@ export default function createConsole(options?: IConsoleOptions, parser?: IParse
 		const currentLocation = getCurrentLocation(gameData);
 		const item = currentLocation.items ? currentLocation.items[itemName] : undefined;
 
-		return !!(item && item.interactions[actionName]);
+		return !!(item && item.interactions && item.interactions[actionName]);
 	}
 
 	function isActionDefinedOnInteractableInCurrentLocation(gameData: IGameData, actionName: string, interactableName: string): boolean {
