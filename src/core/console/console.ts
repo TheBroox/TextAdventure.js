@@ -1,6 +1,6 @@
 import { DefaultParser } from './default.parser';
 import { IParser } from './parser';
-import { ICartridge, IGameData, IGameActions, ILocation } from '../shims/textadventurejs.shim';
+import { ICartridge, IGameData, IGameActions, ILocation, IGameActionResult, ICommand } from '../shims/textadventurejs.shim';
 
 export interface IConsoleOptions {
 	debug?: boolean;
@@ -128,9 +128,9 @@ export default function createConsole(options?: IConsoleOptions, parser?: IParse
 			return {message:'You are dead', success: true};
 		},
 
-		drop : function(game: any, command: any){
-			if(!command.subject){
-				return {message: 'What do you want to drop?', success: false};
+		drop: function(game: any, command: any) {
+			if(!command.subject) {
+				return { message: 'What do you want to drop?', success: false };
 			}
 			try{
 				return {message: interactWithSubjectInCurrentLocation(game, 'drop', command.subject), success: true};
@@ -147,34 +147,47 @@ export default function createConsole(options?: IConsoleOptions, parser?: IParse
 			}
 		},
 
-		go : function(game: any, command: any){
-			if(!command.subject){
+		go: function(game: IGameData, command: ICommand): IGameActionResult {
+
+			if(!command.subject) {
 				return {message: 'Where do you want to go?', success: false};
 			}
-			var exits = getCurrentLocation(game).exits;
-			var playerDestination = null
-			try {
-				playerDestination = exits[command.subject].destination;
-			} catch (error) {
-				for(var exit in exits){
-					var exitObject = exits[exit];
-					if(exitObject.displayName.toLowerCase() === command.subject){
-						playerDestination = exitObject.destination;
-					}
-				}
+
+			const currentLocation = getCurrentLocation(game);
+			const exits = currentLocation.exits;
+
+			let playerDestination = null;
+
+			if (!exits) {
+				return { message: 'You can\'t go anywhere from this location.', success: false };
 			}
-			if(playerDestination === null){
-				return {message: 'You can\'t go there.', success: false};
+
+			const matchingExitName = Object.keys(exits)
+				.find(exitName => exits[exitName].displayName && exits[exitName].displayName.toLowerCase() === command.subject.toLowerCase());
+
+			const matchingExit = exits[matchingExitName];
+
+			if (matchingExit) {
+				playerDestination = matchingExit.destination;
 			}
-			getCurrentLocation(game).firstVisit = false;
-			if (getCurrentLocation(game).teardown !== undefined){
-				getCurrentLocation(game).teardown();
+
+			if(playerDestination === null) {
+				return {message: `Unknown location '${command.subject}'.`, success: false};
 			}
-			if (game.map[playerDestination].setup !== undefined){
+
+			currentLocation.firstVisit = false;
+
+			if (typeof currentLocation.teardown === 'function') {
+				currentLocation.teardown();
+			}
+
+			if (typeof game.map[playerDestination].setup === 'function') {
 				game.map[playerDestination].setup();
 			}
+
 			game.player.currentLocation = playerDestination;
-			return {message: getLocationDescription(game), success: true};
+
+			return { message: getLocationDescription(game), success: true };
 		},
 
 		inventory : function(game: any, command: any){

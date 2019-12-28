@@ -65,11 +65,23 @@ export interface IGameActions {
 export type ConsoleInterfaceFn = (gameData: IGameData, command: ICommand) => IGameActionResult;
 
 export interface IGameActionResult {
-
+    message: string;
+    success: boolean;
 }
 
 export interface ICommand {
     action: string;
     subject: string;
     object: string;
+}
+
+export enum DefaultConsoleActons {
+	die = 'die',
+	drop = 'drop',
+	go = 'go',
+	inventory = 'inventory',
+	load = 'load',
+	look = 'look',
+	take = 'take',
+	use = 'use'
 }
