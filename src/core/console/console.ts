@@ -1,6 +1,6 @@
 import { DefaultParser } from './default.parser';
 import { IParser } from './parser';
-import { ICartridge } from '../shims/textadventurejs.shim';
+import { ICartridge, IGameData, IGameActions, ILocation } from '../shims/textadventurejs.shim';
 
 export interface IConsoleOptions {
 	debug?: boolean;
@@ -16,56 +16,64 @@ export default function createConsole(options?: IConsoleOptions, parser?: IParse
 	parser = parser || new DefaultParser();
 	options = options || {};
 
-	var games: any = {};
+	var games: { [gameId: string]: ICartridge } = {};
 	var availableCartridges: any = {};
 
 	// ----------------------------\
 	// === Main Function ==================================================================================================
 	// ----------------------------/
 	function input(input: string, gameID: string) {
-		var command = parser.parse(input);
-		var game = games[gameID];
-		if(game){
-			var gameActions = game.gameActions;
-			game = game.gameData;
+
+		const command = parser.parse(input);
+		const cartridge = games[gameID];
+
+		if(cartridge) {
+
+			const gameActions = cartridge.gameActions;
+			const game = cartridge.gameData;
+
 			++game.commandCounter;
-			var returnString;
+
+			let returnString;
+
 			debug(gameID + ': ' + game.commandCounter);
-			try {
-				try {
-					debug('---Attempting to run cartridge command "'+command.action+'"');
-					returnString = gameActions[command.action](game, command, consoleInterface);
-				} catch(cartridgeCommandError) {
-					debug('-----'+cartridgeCommandError);
-					debug('---Attempting to run cartridge command "'+command.action+'"');
-					returnString = actions[command.action](game, command).message;
-				}
-			} catch(consoleCommandError){
-				try {
-					debug('-----'+consoleCommandError);
-					debug('---Attempting to perform '+command.action+' interaction');
-					returnString = interactWithSubjectInCurrentLocation(game, command.action, command.subject);
-				} catch (interactionError) {
-					debug('-----'+interactionError);
+
+			if (isActionDefinedInCartridge(gameActions, command.action)) {
+
+				debug(`Running cartridge action '${command.action}'`);
+				returnString = gameActions[command.action](game, command, consoleInterface);
+
+			} else if (isActionDefinedInConsole(actions, command.action)) {
+
+				debug(`Running console action '${command.action}'`);
+				returnString = actions[command.action](game, command).message;
+
+			} else if (canInteractWithSubjectInCurrentLocation(game, command.action, command.subject)) {
+
+				debug(`Performing interaction '${command.action}' in current location on subject ${command.subject}`);
+				returnString = interactWithSubjectInCurrentLocation(game, command.action, command.subject);
+			}
+
+			returnString = returnString || 'I don\'t know how to do that';
+
+			const currentLocation = getCurrentLocation(game);
+
+			if (typeof currentLocation.updateLocation === 'function') {
+
+				const updateLocationString = currentLocation.updateLocation(command);
+
+				if (updateLocationString) {
+					returnString = updateLocationString;
 				}
 			}
-			if(returnString === undefined){
-				returnString = "I don't know how to do that.";
-			} else {
-				try {
-					var updateLocationString = getCurrentLocation(game).updateLocation(command);
-				} catch(updateLocationError){
-					debug('---Failed to Perform updateLocation()');
-					debug('-----'+updateLocationError);
-				}
-			}
-			if(updateLocationString !== undefined){
-				returnString = updateLocationString;
-			}
+
 			return checkForGameEnd(game, returnString);
+
 		} else {
+
 			debug(gameID + ': no game');
-			if(command.action === 'load'){
+
+			if(command.action === 'load') {
 				return loadCartridge(gameID, command.subject);
 			} else {
 				return listCartridges();
@@ -283,7 +291,7 @@ export default function createConsole(options?: IConsoleOptions, parser?: IParse
 
 	function debug(debugText: any){
 		if(options.debug){
-			console.log(debugText);
+			console.log(`[DEBUG] ${debugText}`);
 		}
 	}
 
@@ -321,8 +329,8 @@ export default function createConsole(options?: IConsoleOptions, parser?: IParse
 		return returnString;
 	}
 
-	function getCurrentLocation(game: any){
-		return game.map[game.player.currentLocation];
+	function getCurrentLocation(gameData: IGameData): ILocation {
+		return gameData.map[gameData.player.currentLocation];
 	}
 
 	function getLocationDescription(game: any, forcedLongDescription?: any){
@@ -430,22 +438,51 @@ export default function createConsole(options?: IConsoleOptions, parser?: IParse
 		return;
 	}
 
-	function isItemInPlayerInventory(game: any, itemName: any) {
-		return !!(game.player.inventory && game.player.inventory[itemName]);
+	function isItemInPlayerInventory(gameData: IGameData, itemName: any): boolean {
+		return !!(gameData.player.inventory && gameData.player.inventory[itemName]);
 	}
 
-	function isItemInCurrentLocation(game: any, itemName: any) {
+	function isItemInCurrentLocation(gameData: IGameData, itemName: any): boolean {
 
-		var currentLocation = getCurrentLocation(game);
+		const currentLocation = getCurrentLocation(gameData);
 
 		return !!(currentLocation.items && currentLocation.items[itemName]);
 	}
 
-	function isInteractableInCurrentLocation(game: any, interactibleName: any) {
+	function isInteractableInCurrentLocation(gameData: IGameData, interactibleName: any): boolean {
 
-		var currentLocation = getCurrentLocation(game);
+		const currentLocation = getCurrentLocation(gameData);
 
 		return !!(currentLocation.interactables && currentLocation.interactables[interactibleName]);
+	}
+
+	function isActionDefinedInCartridge(cartridgeActions: IGameActions, actionName: string): boolean {
+		return (typeof cartridgeActions[actionName] === 'function');
+	}
+
+	function isActionDefinedInConsole(consoleActions: IGameActions, actionName: string): boolean {
+		return (typeof consoleActions[actionName] === 'function');
+	}
+
+	function canInteractWithSubjectInCurrentLocation(gameData: IGameData, actionName: string, subjectName: string): boolean {
+		return (isItemInCurrentLocation(gameData, subjectName) && isActionDefinedOnItemInCurrentLocation(gameData, actionName, subjectName)) ||
+			(isInteractableInCurrentLocation(gameData, subjectName) && isActionDefinedOnInteractableInCurrentLocation(gameData, actionName, subjectName));
+	}
+
+	function isActionDefinedOnItemInCurrentLocation(gameData: IGameData, actionName: string, itemName: string): boolean {
+
+		const currentLocation = getCurrentLocation(gameData);
+		const item = currentLocation.items ? currentLocation.items[itemName] : undefined;
+
+		return !!(item && item.interactions[actionName]);
+	}
+
+	function isActionDefinedOnInteractableInCurrentLocation(gameData: IGameData, actionName: string, interactableName: string): boolean {
+		
+		const currentLocation = getCurrentLocation(gameData);
+		const interactable = currentLocation.interactables ? currentLocation.interactables[interactableName] : undefined;
+		
+		return !!(interactable && interactable[actionName]);
 	}
 
 	function moveItem(itemName: any, startLocation: any, endLocation: any){

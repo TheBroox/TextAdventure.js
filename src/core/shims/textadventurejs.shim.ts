@@ -4,6 +4,7 @@ export interface ICartridge {
 }
 
 export interface IGameData {
+    gameID?: string;
     commandCounter: number;
 	gameOver: boolean;
 	introText: string;
@@ -32,7 +33,7 @@ export interface ILocation {
 
     setup?: (...args: any[]) => void;
     teardown?: (...args: any[]) => void;
-    updateLocation?: (...args: any[]) => string;
+    updateLocation?: (command: ICommand) => string;
 }
 
 export interface IItemCollection { [itemName: string]: IItem };
