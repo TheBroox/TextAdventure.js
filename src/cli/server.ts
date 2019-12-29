@@ -1,4 +1,6 @@
 const io = require('console-read-write');
+const chalk = require('chalk');
+
 import createConsole from '../core/console/console';
 
 import * as jahmolxesCartridge from '../cartridges/jahmolxes';
@@ -6,7 +8,9 @@ import * as goldMineCartridge from '../cartridges/gold_mine';
 
 async function main() {
 
-  const cons = createConsole();
+  const cons = createConsole({
+    debug: true
+  });
 
   cons.registerCartridge('jahmolxes', jahmolxesCartridge);
   cons.registerCartridge('goldmine', goldMineCartridge);
@@ -26,7 +30,7 @@ async function main() {
 
     const response = cons.input(command, gameId);
 
-    io.write(response);
+    console.log(chalk.cyan(response));
   }
 }
  

@@ -4,6 +4,7 @@ export interface ICartridge {
 }
 
 export interface IGameData {
+    gameID?: string;
     commandCounter: number;
 	gameOver: boolean;
 	introText: string;
@@ -32,7 +33,7 @@ export interface ILocation {
 
     setup?: (...args: any[]) => void;
     teardown?: (...args: any[]) => void;
-    updateLocation?: (...args: any[]) => string;
+    updateLocation?: (command: ICommand) => string;
 }
 
 export interface IItemCollection { [itemName: string]: IItem };
@@ -64,11 +65,23 @@ export interface IGameActions {
 export type ConsoleInterfaceFn = (gameData: IGameData, command: ICommand) => IGameActionResult;
 
 export interface IGameActionResult {
-
+    message: string;
+    success: boolean;
 }
 
 export interface ICommand {
     action: string;
     subject: string;
     object: string;
+}
+
+export enum DefaultConsoleActons {
+	die = 'die',
+	drop = 'drop',
+	go = 'go',
+	inventory = 'inventory',
+	load = 'load',
+	look = 'look',
+	take = 'take',
+	use = 'use'
 }
