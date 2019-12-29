@@ -46,6 +46,7 @@ export interface IItem {
     hidden: boolean;
     quantity: number;
     use?: (...args: any[]) => string;
+    onTaken?: () => void;
     interactions?: { [interactionName: string]: string; };
 }
 

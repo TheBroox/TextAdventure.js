@@ -262,7 +262,15 @@ export default function createConsole(options?: IConsoleOptions, parser?: IParse
 			}
 
 			if (isItemInCurrentLocation(game, command.subject)) {
+
 				moveItem(command.subject, getCurrentLocation(game).items, game.player.inventory);
+
+				const item = getItem(game.player.inventory, command.subject);
+
+				if (typeof item.onTaken === 'function') {
+					item.onTaken();
+				}
+
 				return { message: `Taken ${command.subject}`, success: true };
 			}
 
