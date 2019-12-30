@@ -1,58 +1,24 @@
-import { DefaultConsoleActons } from "../core/shims/textadventurejs.shim";
+import { MapBuilder } from './map.builder';
+import { ICartridge } from '../core/shims/textadventurejs.shim';
 
-const game: any = {};
+export class GameBuilder {
 
-// mockup of the future cartridge definition system
-game.createLocation('Village.School', (location: any) => {
+    private _mapBuilder: MapBuilder;
 
-    location
-        .description('asdsa')
-        .displayName('sdasd')
-        .interactables((interactables: any) => {
+    constructor() {
+        
+    }
 
-            interactables.add('door')
-                .interact(DefaultConsoleActons.look, () => {
-                    return "it's a door";
-                })
-                .interact('open', () => {
+    public configureMap(mapConfigurator: (mapBuilder: MapBuilder) => void): GameBuilder {
 
-                    if (game.player.getProperty('hasSchoolKey')) {
-                        location.addExit('outside')
-                            .displayName('Outside')
-                            .destination('Village.Square');
+        this._mapBuilder = this._mapBuilder || new MapBuilder();
 
-                        return "The door opens. You can go outside.";
-                    } else {
-                        return "The door is locked.";
-                    }
-                })
+        mapConfigurator(this._mapBuilder);
 
-            interactables.add('window')
-                .interact(DefaultConsoleActons.look, () => {
-                    return "it's a window";
-                });
+        return this;
+    }
 
-            interactables.add('cabinet')
-                .interact(DefaultConsoleActons.look, () => {
+    public build(): ICartridge {
 
-                    game.spawnInteractable('Village.School', 'drawer')
-                        .interact('open', () => {
-
-                            game.spawnItem('Village.School', 'key', 1)
-                                .onTaken(() => {
-                                    game.player.setProperty('hasSchoolKey', true);
-                                });
-
-                            return "There's a key inside.";
-                        });
-
-                    return "it's a cabinet";
-                });
-        })
-        .items((items: any) => {
-            
-        })
-        .exits((exits: any) => {
-            
-        })
-})
+    }
+}

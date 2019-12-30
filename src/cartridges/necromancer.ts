@@ -47,7 +47,7 @@ const cartridge: ICartridge = {
                                         displayName: "key",
                                         hidden: true,
                                         quantity: 1,
-                                        use: () => {l
+                                        use: () => {
                                             return "You use the key";
                                         },
                                         onTaken: () => {
