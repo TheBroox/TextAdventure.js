@@ -27,7 +27,7 @@ const cartridge: ICartridge = {
                                     displayName: 'Outside'
                                 };
 
-                                "The door opens. You can go outside.";
+                                return "The door opens. You can go outside.";
                             } else {
                                 return "The door is locked.";
                             }
@@ -47,8 +47,8 @@ const cartridge: ICartridge = {
                                         displayName: "key",
                                         hidden: true,
                                         quantity: 1,
-                                        use: () => {
-                                            return "You took the key";
+                                        use: () => {l
+                                            return "You use the key";
                                         },
                                         onTaken: () => {
                                             cartridge.gameData.player.hasKey = true;
