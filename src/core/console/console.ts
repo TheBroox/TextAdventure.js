@@ -458,7 +458,11 @@ export default function createConsole(options?: IConsoleOptions, parser?: IParse
 				throw new Error(`Item ${subject} doesn't have a custom interaction defined for ${interaction}`);
 			}
 
-			return customInteractionsForItem[interaction];
+			var customInteraction = customInteractionsForItem[interaction];
+
+			return typeof customInteraction === 'function'
+				? customInteraction()
+				: customInteraction;
 		}
 
 		if (subjectIsInteractable) {

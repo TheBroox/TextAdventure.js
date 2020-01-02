@@ -6,6 +6,7 @@ import createConsole from '../core/console/console';
 import * as jahmolxesCartridge from '../cartridges/jahmolxes';
 import * as goldMineCartridge from '../cartridges/gold_mine';
 import * as necromancerCartridge from '../cartridges/necromancer';
+import * as necroCartridge from '../cartridges/necro';
 
 async function main() {
 
@@ -16,6 +17,7 @@ async function main() {
   cons.registerCartridge('jahmolxes', jahmolxesCartridge);
   cons.registerCartridge('goldmine', goldMineCartridge);
   cons.registerCartridge('necromancer', necromancerCartridge);
+  cons.registerCartridge('necro', necroCartridge);
 
   io.write('Started CLI server:');
 

@@ -47,7 +47,7 @@ export interface IItem {
     quantity: number;
     use?: (...args: any[]) => string;
     onTaken?: () => void;
-    interactions?: { [interactionName: string]: string; };
+    interactions?: { [interactionName: string]: string | (() => string); };
 }
 
 export interface IInteractable {

@@ -24,7 +24,7 @@ export class LocationBuilder {
         this._gameContext = gameContext;
         
         this._interactablesBuilder = new InteractablesBuilder(this._gameContext);
-        this._itemsBuilder = new ItemsBuilder();
+        this._itemsBuilder = new ItemsBuilder(this._gameContext);
         this._exitsBuilder = new ExitsBuilder();
     }
 
