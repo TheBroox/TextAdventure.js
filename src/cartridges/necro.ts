@@ -65,10 +65,10 @@ game
                         return "an old cabinet with a single drawer.";
                     });
             })
-            .configureItems((items: any) => {
+            .configureItems(items => {
                 
             })
-            .configureExits((exits: any) => {
+            .configureExits(exits => {
                 
             })
     })
