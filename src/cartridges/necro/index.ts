@@ -74,10 +74,22 @@ game
             })
             .configureItems(items => {
                 
+                /*
+                items.add('dildo')
+                    .displayName('dildo')
+                    .description('A huge dildo.')
+                    .onTaken(() => {
+                        console.log("Appears to have been used.");
+                    })
+                    .on('look', () => {
+                        return "Lo and behold.";
+                    });
+                */
             })
             .configureExits(exits => {
                 
-            })
+
+            });
     });
 
     map.configureLocation('Village.Square', location => {
@@ -86,7 +98,12 @@ game
             .displayName("Square")
             .description("The village's square")
             .onSetup(context => {
-                context.setGameOver("Eh, nothing to do from here... Type 'exit' to end game");
+                // context.setGameOver("Eh, nothing to do from here... Type 'exit' to end game");
+            })
+            .configureExits(exits => {
+                exits.add('school')
+                    .destination('Village.School')
+                    .displayName('School');
             });
     });
 })

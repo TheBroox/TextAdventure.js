@@ -401,9 +401,9 @@ export default function createConsole(options?: IConsoleOptions, parser?: IParse
 		if(itemLocation[itemName] !== undefined) {
 			return itemName;
 		} else {
-			for(var item in itemLocation){
-				if(itemLocation[item].displayName.toLowerCase() === itemName){
-					return item;
+			for(var propertyName in itemLocation){
+				if(itemLocation[propertyName].displayName && itemLocation[propertyName].displayName.toLowerCase() === itemName){
+					return propertyName;
 				}
 			}
 		}

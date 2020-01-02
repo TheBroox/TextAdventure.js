@@ -49,6 +49,16 @@ export class ItemBuilder {
         this._quantity = 1;
     }
 
+    public displayName(displayName: string): ItemBuilder {
+        this._displayName = displayName;
+        return this;
+    }
+
+    public description(description: string): ItemBuilder {
+        this._description = description;
+        return this;
+    }
+
     public quantity(quantity: number): ItemBuilder {
 
         this._quantity = quantity;

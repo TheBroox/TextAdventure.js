@@ -25,7 +25,7 @@ export class LocationBuilder {
         
         this._interactablesBuilder = new InteractablesBuilder(this._gameContext);
         this._itemsBuilder = new ItemsBuilder(this._gameContext);
-        this._exitsBuilder = new ExitsBuilder();
+        this._exitsBuilder = new ExitsBuilder(this._gameContext);
     }
 
     public displayName(displayName: string): LocationBuilder {
@@ -48,7 +48,7 @@ export class LocationBuilder {
     public configureItems(itemsConfigurator: (itemsBuilder: ItemsBuilder) => void): LocationBuilder {
         
         itemsConfigurator(this._itemsBuilder);
-
+        
         return this;
     }
 
