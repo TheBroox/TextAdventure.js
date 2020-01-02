@@ -80,15 +80,4 @@ game
 
 const cartridge = game.build();
 
-console.log("game built");
-console.log(JSON.stringify(cartridge, null, 4));
-
-console.log('locations:');
-Object.keys(cartridge.gameData.map).forEach(locationName => {
-
-    console.log(locationName);
-    console.log(cartridge.gameData.map[locationName].interactables);
-});
-
-
 export = cartridge;
