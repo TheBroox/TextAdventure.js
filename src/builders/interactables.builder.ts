@@ -4,14 +4,15 @@ import { GameContext } from './game.context';
 export class InteractablesBuilder {
 
     private _interactableBuilders: { [interactableName: string]: InteractableBuilder } = {};
+    private _gameContext: GameContext;
 
-    constructor() {
-
+    constructor(gameContext: GameContext) {
+        this._gameContext = gameContext;
     }
 
     public add(interactableName: string): InteractableBuilder {
 
-        this._interactableBuilders[interactableName] = this._interactableBuilders[interactableName] || new InteractableBuilder();
+        this._interactableBuilders[interactableName] = this._interactableBuilders[interactableName] || new InteractableBuilder(this._gameContext);
 
         return this._interactableBuilders[interactableName];
     }

@@ -1,17 +1,19 @@
 import { LocationBuilder } from './location.builder';
 import { IMap } from '../core/shims/textadventurejs.shim';
+import { GameContext } from './game.context';
 
 export class MapBuilder {
 
     private _locationBuilders: { [locationName: string]: LocationBuilder } = {};
+    private _gameContext: GameContext;
 
-    constructor() {
-
+    constructor(gameContext: GameContext) {
+        this._gameContext = gameContext;
     }
 
     configureLocation(locationName: string, locationConfigurator: (locationBuilder: LocationBuilder) => void): MapBuilder {
 
-        this._locationBuilders[locationName] = this._locationBuilders[locationName] || new LocationBuilder();
+        this._locationBuilders[locationName] = this._locationBuilders[locationName] || new LocationBuilder(this._gameContext);
 
         locationConfigurator(this._locationBuilders[locationName]);
 

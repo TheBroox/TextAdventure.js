@@ -35,9 +35,9 @@ game.configureMap(map => {
                     });
     
                 interactables.add('cabinet')
-                    .on(DefaultConsoleActons.look, () => {
+                    .on(DefaultConsoleActons.look, context => {
     
-                        game.spawnInteractableInLocation('Village.School', 'drawer')
+                        context.spawnInteractableInLocation('Village.School', 'drawer')
                             .on('open', context => {
     
                                 context.spawnItemInLocation('Village.School', 'key', 1)

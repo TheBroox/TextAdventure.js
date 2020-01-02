@@ -2,6 +2,7 @@ import { ILocation, ICommand } from '../core/shims/textadventurejs.shim';
 import { InteractablesBuilder } from './interactables.builder';
 import { ItemsBuilder } from './items.builder';
 import { ExitsBuilder } from './exits.builder';
+import { GameContext } from './game.context';
 
 export class LocationBuilder {
 
@@ -16,8 +17,13 @@ export class LocationBuilder {
     private _onTeardown: () => void;
     private _onCommandExecuted: (command: ICommand) => string;
 
-    constructor() {
-        this._interactablesBuilder = new InteractablesBuilder();
+    private _gameContext: GameContext;
+
+    constructor(gameContext: GameContext) {
+
+        this._gameContext = gameContext;
+        
+        this._interactablesBuilder = new InteractablesBuilder(this._gameContext);
         this._itemsBuilder = new ItemsBuilder();
         this._exitsBuilder = new ExitsBuilder();
     }
