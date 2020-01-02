@@ -13,7 +13,7 @@ export class LocationBuilder {
     private _itemsBuilder: ItemsBuilder;
     private _exitsBuilder: ExitsBuilder;
 
-    private _onSetup: () => void;
+    private _onSetup: (gameContext: GameContext) => void;
     private _onTeardown: () => void;
     private _onCommandExecuted: (command: ICommand) => string;
 
@@ -59,7 +59,7 @@ export class LocationBuilder {
         return this;
     }
 
-    public onSetup(onSetupFn: () => void): LocationBuilder {
+    public onSetup(onSetupFn: (gameContext: GameContext) => void): LocationBuilder {
         this._onSetup = onSetupFn;
         return this;
     }
@@ -76,6 +76,12 @@ export class LocationBuilder {
 
     public build(): ILocation {
         
+        const onSetup = () => {
+            if (typeof this._onSetup === 'function') {
+                this._onSetup(this._gameContext);
+            }
+        };
+
         return {
             description: this._description,
             firstVisit: true,
@@ -83,7 +89,7 @@ export class LocationBuilder {
             exits: this._exitsBuilder.build(),
             interactables: this._interactablesBuilder.build(),
             items: this._itemsBuilder.build(),
-            setup: this._onSetup,
+            setup: onSetup,
             teardown: this._onTeardown,
             updateLocation: this._onCommandExecuted
         }

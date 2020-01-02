@@ -49,7 +49,7 @@ export class GameContext {
         location.interactables[interactableName] = interactableBuilder.build();
     }
 
-    public spawnItemInLocation(locationName: string, itemName: string, itemConfigurator: (itemBuilder: ItemBuilder) => void): any {
+    public spawnItemInLocation(locationName: string, itemName: string, itemConfigurator: (itemBuilder: ItemBuilder) => void): void {
         
         const itemBuilder = new ItemBuilder(this);
 
@@ -60,6 +60,15 @@ export class GameContext {
         itemConfigurator(itemBuilder);
 
         location.items[itemName] = itemBuilder.build();
+    }
+
+    public setGameOver(endText?: string): void {
+
+        this._gameBuilder.game.gameData.gameOver = true;
+
+        if (endText) {
+            this._gameBuilder.game.gameData.outroText = endText;
+        }
     }
 
     private getLocation(locationName: string): ILocation {

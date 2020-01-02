@@ -1,10 +1,14 @@
-import { DefaultConsoleActons } from "../core/shims/textadventurejs.shim";
-import { GameBuilder } from "../builders/game.builder";
+import { DefaultConsoleActons } from "../../core/shims/textadventurejs.shim";
+import { GameBuilder } from "../../builders/game.builder";
+import fs from 'fs';
+import path from 'path';
 
 const game: GameBuilder = new GameBuilder();
 
+const introText = fs.readFileSync(path.join(__dirname, 'introtext.txt'), 'utf8').toString();
+
 game
-.introText("you are teleported in the village's school.'")
+.introText(introText)
 .configureMap(map => {
 
     map.configureLocation('Village.School', location => {
@@ -20,14 +24,14 @@ game
                     })
                     .on("open", context => {
     
-                        if (context.getPlayerProperty('hasSchoolKey')) {
+                        if (context.getPlayerProperty('isVillageSchoolDoorOpened')) {
 
                             context.spawnExitInLocation('Village.School', 'outside', exit => {
                                 exit
                                     .displayName('Outside')
                                     .destination('Village.Square');
                             });
-                                
+
                             return "The door opens. You can go outside.";
                         } else {
                             return "The door is locked.";
@@ -36,7 +40,7 @@ game
     
                 interactables.add("window")
                     .on(DefaultConsoleActons.look, () => {
-                        return "the window is baricaded.";
+                        return "The window is baricaded.";
                     });
     
                 interactables.add("cabinet")
@@ -50,11 +54,14 @@ game
                                     context.spawnItemInLocation('Village.School', 'key', item => {
 
                                         item
-                                            .onTaken(() => {
-                                                context.setPlayerProperty('hasSchoolKey', true);
-                                            })
-                                            .onUse(() => {
-                                                return "You use the key.";
+                                            .onUse((context, object) => {
+                                                
+                                                if (object === 'door') {
+                                                    context.setPlayerProperty('isVillageSchoolDoorOpened', true);
+                                                    return "The door is unlocked."
+                                                }
+
+                                                return "Key must be used on something.";
                                             });
                                     });
                                         
@@ -62,7 +69,7 @@ game
                                 });
                         })
     
-                        return "an old cabinet with a single drawer.";
+                        return "An old cabinet with a single drawer.";
                     });
             })
             .configureItems(items => {
@@ -71,7 +78,17 @@ game
             .configureExits(exits => {
                 
             })
-    })
+    });
+
+    map.configureLocation('Village.Square', location => {
+
+        location
+            .displayName("Square")
+            .description("The village's square")
+            .onSetup(context => {
+                context.setGameOver("Eh, nothing to do from here... Type 'exit' to end game");
+            });
+    });
 })
 .configurePlayer(player => {
 
