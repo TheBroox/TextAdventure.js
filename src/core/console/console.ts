@@ -1,6 +1,6 @@
 import { DefaultParser } from './default.parser';
 import { IParser } from './parser';
-import { ICartridge, IGameData, IGameActions, ILocation, IGameActionResult, ICommand, DefaultConsoleActons } from '../shims/textadventurejs.shim';
+import { ICartridge, IGameData, IGameActions, ILocation, IGameActionResult, ICommand, DefaultConsoleActons, IItem } from '../shims/textadventurejs.shim';
 
 export interface IConsoleOptions {
 	debug?: boolean;
@@ -190,7 +190,13 @@ export default function createConsole(options?: IConsoleOptions, parser?: IParse
 				currentLocation.teardown();
 			}
 
-			if (typeof game.map[playerDestination].setup === 'function') {
+			const destinationLocation = game.map[playerDestination];
+
+			if (!destinationLocation) {
+				throw new Error (`No location named ${playerDestination} has been defined`);
+			}
+
+			if (typeof destinationLocation.setup === 'function') {
 				game.map[playerDestination].setup();
 			}
 
@@ -245,7 +251,7 @@ export default function createConsole(options?: IConsoleOptions, parser?: IParse
 
 			if (!interactionMessage) {
 				debug(`No interaction message specified for command 'look' and subject '${command.subject}'`);
-				return { message: 'There is nothing important about the '+ command.subject+ '.', success: false };
+				return { message: `What's a ${command.subject}?`, success: false };
 			}
 
 			return { message: (interactionMessage || ''), success: true };
@@ -287,7 +293,7 @@ export default function createConsole(options?: IConsoleOptions, parser?: IParse
 				const item = getItem(game.player.inventory, command.subject);
 
 				if (typeof item.use === 'function') {
-					return { message: item.use(), success: true };
+					return { message: item.use(command.object), success: true };
 				} else {
 					return { message: `Can't use '${command.subject}'`, success: false };
 				}
@@ -328,7 +334,7 @@ export default function createConsole(options?: IConsoleOptions, parser?: IParse
 
 	function debug(debugText: any){
 		if(options.debug){
-			console.log(`[DEBUG] ${debugText}`);
+			console.log(`    [DEBUG] ${debugText}`);
 		}
 	}
 
@@ -387,7 +393,7 @@ export default function createConsole(options?: IConsoleOptions, parser?: IParse
 		return description;
 	}
 
-	function getItem(itemLocation: any, itemName: any){
+	function getItem(itemLocation: any, itemName: any): IItem {
 		return itemLocation[getItemName(itemLocation, itemName)];
 	}
 
@@ -395,9 +401,9 @@ export default function createConsole(options?: IConsoleOptions, parser?: IParse
 		if(itemLocation[itemName] !== undefined) {
 			return itemName;
 		} else {
-			for(var item in itemLocation){
-				if(itemLocation[item].displayName.toLowerCase() === itemName){
-					return item;
+			for(var propertyName in itemLocation){
+				if(itemLocation[propertyName].displayName && itemLocation[propertyName].displayName.toLowerCase() === itemName){
+					return propertyName;
 				}
 			}
 		}
@@ -458,7 +464,11 @@ export default function createConsole(options?: IConsoleOptions, parser?: IParse
 				throw new Error(`Item ${subject} doesn't have a custom interaction defined for ${interaction}`);
 			}
 
-			return customInteractionsForItem[interaction];
+			var customInteraction = customInteractionsForItem[interaction];
+
+			return typeof customInteraction === 'function'
+				? customInteraction()
+				: customInteraction;
 		}
 
 		if (subjectIsInteractable) {

@@ -1,58 +1,67 @@
-import { DefaultConsoleActons } from "../core/shims/textadventurejs.shim";
+import { MapBuilder } from './map.builder';
+import { ICartridge } from '../core/shims/textadventurejs.shim';
+import { GameContext } from './game.context';
+import { PlayerBuilder } from './player.builder';
 
-const game: any = {};
+export class GameBuilder {
 
-// mockup of the future cartridge definition system
-game.createLocation('Village.School', (location: any) => {
+    private _mapBuilder: MapBuilder;
+    private _playerBuilder: PlayerBuilder;
+    private _introText: string;
+    private _outroText: string;
+    
+    public game: ICartridge;
 
-    location
-        .description('asdsa')
-        .displayName('sdasd')
-        .interactables((interactables: any) => {
+    constructor() {
+        
+    }
 
-            interactables.add('door')
-                .interact(DefaultConsoleActons.look, () => {
-                    return "it's a door";
-                })
-                .interact('open', () => {
+    public configureMap(mapConfigurator: (mapBuilder: MapBuilder) => void): GameBuilder {
 
-                    if (game.player.getProperty('hasSchoolKey')) {
-                        location.addExit('outside')
-                            .displayName('Outside')
-                            .destination('Village.Square');
+        const gameContext = new GameContext(this);
 
-                        return "The door opens. You can go outside.";
-                    } else {
-                        return "The door is locked.";
-                    }
-                })
+        this._mapBuilder = this._mapBuilder || new MapBuilder(gameContext);
 
-            interactables.add('window')
-                .interact(DefaultConsoleActons.look, () => {
-                    return "it's a window";
-                });
+        mapConfigurator(this._mapBuilder);
 
-            interactables.add('cabinet')
-                .interact(DefaultConsoleActons.look, () => {
+        return this;
+    }
 
-                    game.spawnInteractable('Village.School', 'drawer')
-                        .interact('open', () => {
+    public configurePlayer(playerConfigurator: (playerBuilder: PlayerBuilder) => void): GameBuilder {
+        
+        const gameContext = new GameContext(this);
 
-                            game.spawnItem('Village.School', 'key', 1)
-                                .onTaken(() => {
-                                    game.player.setProperty('hasSchoolKey', true);
-                                });
+        this._playerBuilder = this._playerBuilder || new PlayerBuilder(gameContext);
 
-                            return "There's a key inside.";
-                        });
+        playerConfigurator(this._playerBuilder);
 
-                    return "it's a cabinet";
-                });
-        })
-        .items((items: any) => {
-            
-        })
-        .exits((exits: any) => {
-            
-        })
-})
+        return this;
+    }
+
+    public introText(introText: string): GameBuilder {
+        this._introText = introText;
+        return this;
+    }
+
+    public outroText(outroText: string): GameBuilder {
+        this._outroText = outroText;
+        return this;
+    }
+
+    public build(): ICartridge {
+        
+        this.game = {
+            gameData: {
+                commandCounter: 0,
+                gameOver: false,
+                introText: this._introText,
+                outroText: this._outroText,
+                player: this._playerBuilder.build(),
+                map: this._mapBuilder.build()
+            },
+            gameActions: {}
+        };
+
+        return this.game;
+    }
+}

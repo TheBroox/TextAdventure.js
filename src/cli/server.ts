@@ -3,19 +3,18 @@ const chalk = require('chalk');
 
 import createConsole from '../core/console/console';
 
-import * as jahmolxesCartridge from '../cartridges/jahmolxes';
-import * as goldMineCartridge from '../cartridges/gold_mine';
-import * as necromancerCartridge from '../cartridges/necromancer';
+import * as necroCartridge from '../cartridges/necro';
+
+const debugEnabled = false;
+const devmodeEnabled = true;
 
 async function main() {
 
   const cons = createConsole({
-    debug: true
+    debug: debugEnabled
   });
 
-  cons.registerCartridge('jahmolxes', jahmolxesCartridge);
-  cons.registerCartridge('goldmine', goldMineCartridge);
-  cons.registerCartridge('necromancer', necromancerCartridge);
+  cons.registerCartridge('necro', necroCartridge);
 
   io.write('Started CLI server:');
 
@@ -23,16 +22,49 @@ async function main() {
  
   while (true) {
 
-    const command = await io.read();
+    const command: string = await io.read();
 
     if (command === 'exit') {
       io.write('Exiting...');
       break;
     }
 
-    const response = cons.input(command, gameId);
+    if (devmodeEnabled) {
 
-    console.log(chalk.cyan(response));
+      const commandComponents = command.split(' ');
+
+      if (commandComponents[0] === 'dev') {
+
+        const componentsAfterDev = commandComponents.slice(1).join(' ');
+        const individualCommands = componentsAfterDev.split(';');
+  
+        for(let i = 0; i < individualCommands.length; i++) {
+  
+          const individualCommand = individualCommands[i];
+
+          if (!individualCommand) {
+            continue;
+          }
+  
+          console.log(chalk.cyanBright(`[DEV]> ${individualCommand}`));
+  
+          const response = cons.input(individualCommand.trim(), gameId);
+  
+          console.log(chalk.cyan(response));
+        }
+  
+      } else {
+        const response = cons.input(command, gameId);
+
+        console.log(chalk.cyan(response));
+      }
+
+    } else {
+
+      const response = cons.input(command, gameId);
+
+      console.log(chalk.cyan(response));
+    }    
   }
 }
  

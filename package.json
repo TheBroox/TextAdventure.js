@@ -12,7 +12,9 @@
   "scripts": {
     "clean": "rimraf dist",
     "build": "npm run clean && tsc && npm run copy",
-    "copy": "cd src/web && copyfiles -e **/*.ts static/**/*.* ../../dist/web",
+    "copy": "npm run copy:web && npm run copy:cartridges",
+    "copy:cartridges": "cd src/cartridges && copyfiles -e **/*.ts **/*.* ../../dist/cartridges && cd ../..",
+    "copy:web": "cd src/web && copyfiles -e **/*.ts static/**/*.* ../../dist/web && cd ../..",
     "start:web": "node dist/web/server.js",
     "start:cli": "node dist/cli/server.js",
     "start": "npm run start:cli"

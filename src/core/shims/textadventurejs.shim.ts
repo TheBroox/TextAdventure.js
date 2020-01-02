@@ -45,9 +45,9 @@ export interface IItem {
     displayName: string;
     hidden: boolean;
     quantity: number;
-    use?: (...args: any[]) => string;
+    use?: (object: string) => string;
     onTaken?: () => void;
-    interactions?: { [interactionName: string]: string; };
+    interactions?: { [interactionName: string]: string | (() => string); };
 }
 
 export interface IInteractable {
@@ -73,7 +73,7 @@ export interface IGameActionResult {
 export interface ICommand {
     action: string;
     subject: string;
-    object: string;
+    object?: string;
 }
 
 export enum DefaultConsoleActons {

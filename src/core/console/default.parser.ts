@@ -14,8 +14,7 @@ export class DefaultParser implements IParser {
 		// === Create Necessary Variables ===
 		var command: ICommand = {
 			action: '',
-			subject: '',
-			object: ''
+			subject: ''
 		};
 
 		var subjectStartIndex;
@@ -32,6 +31,7 @@ export class DefaultParser implements IParser {
 				break;
 			}
 		}
+
 		// === Determine Subject End and Object Start ===
 		for (var i=subjectStartIndex+1; i < components.length; ++i){
 			if(subjectEndWords.indexOf(components[i]) !== -1){
@@ -44,16 +44,9 @@ export class DefaultParser implements IParser {
 				command.subject = command.subject.concat(' '+components[i]);
 			}
 		}
-		// === Determine End of Object ===
-		for (var i=objectStartIndex+1; i<components.length; ++i){
-			if (skipWords.indexOf(components[i]) === -1) {
-				if(command.object === ''){
-					command.object = command.object.concat(components[i]);
-				} else {
-					command.object = command.object.concat(' '+components[i]);
-				}
-			}
-		}
+
+		command.object = components.slice(objectStartIndex).join(' ');
+
 		return command;
 	}
 
