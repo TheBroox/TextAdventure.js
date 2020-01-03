@@ -5,11 +5,9 @@ import path from 'path';
 
 const introText = fs.readFileSync(path.join(__dirname, 'introtext.txt'), 'utf8').toString();
 
-export = (savedCartridge?: ICartridge) => {
+export = (cartridgeBuilder: CartridgeBuilder) => {
 
-    const gameBuilder: CartridgeBuilder = new CartridgeBuilder(savedCartridge);
-
-    gameBuilder
+    cartridgeBuilder
     .introText(introText)
     .configureMap(map => {
 
@@ -114,6 +112,5 @@ export = (savedCartridge?: ICartridge) => {
         player.startingLocation('Village.School');
     });
 
-    return gameBuilder.build();
-
+    return cartridgeBuilder.build();
 }

@@ -3,9 +3,10 @@ const chalk = require('chalk');
 
 import createConsole, { IConsoleInputResponse } from '../core/console/console';
 
-import necroCartridgeBuilder from '../cartridges/necro';
+import necroCartridgeFactory from '../cartridges/necro';
 import { FileSystemCartridgeRepository } from '../core/repositories/file-system.cartridge.repository';
 import path from 'path';
+import { CartridgeBuilder } from '../builders/cartridge.builder';
 
 const debugEnabled = process.env.NECRO_DEBUG ? (process.env.NECRO_DEBUG.toLowerCase() === 'true') : false;
 const devmodeEnabled = process.env.NECRO_DEVMODE ? (process.env.NECRO_DEVMODE.toLowerCase() === 'true') : false;
@@ -16,7 +17,8 @@ async function main() {
   const repository = new FileSystemCartridgeRepository(saveFilePath);
 
   const savedCartridge = await repository.loadCartridgeAsync();
-  const necroCartridge = necroCartridgeBuilder(savedCartridge);
+  const cartridgeBuilder = new CartridgeBuilder(savedCartridge);
+  const necroCartridge = necroCartridgeFactory(cartridgeBuilder);
 
   const cons = createConsole(necroCartridge, {
     onDebugLog: logDebug
