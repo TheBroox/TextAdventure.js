@@ -7,128 +7,81 @@ export interface IConsoleOptions {
 }
 
 export interface IConsole {
-	input(input: string, gameID: string): string;
-	registerCartridge(name: string, cartridgeDefinition: ICartridge): void;
+	getIntroText(): string;
+	input(input: string): IConsoleInputResponse;
 }
 
-export default function createConsole(options?: IConsoleOptions, parser?: IParser): IConsole {
+export interface IConsoleInputResponse {
+	message: string;
+	cartridge: ICartridge;
+}
+
+export default function createConsole(cartridge: ICartridge, options?: IConsoleOptions, parser?: IParser): IConsole {
 
 	parser = parser || new DefaultParser();
 	options = options || {};
 
-	var games: { [gameId: string]: ICartridge } = {};
-	var availableCartridges: any = {};
+	function getIntroText(): string {
+		return cartridge.gameData.introText;
+	}
 
-	// ----------------------------\
-	// === Main Function ==================================================================================================
-	// ----------------------------/
-	function input(input: string, gameID: string) {
+	function input(input: string): IConsoleInputResponse {
 
 		const command = parser.parse(input);
-		const cartridge = games[gameID];
 
-		if(cartridge) {
+		const gameActions = cartridge.gameActions;
+		const game = cartridge.gameData;
 
-			const gameActions = cartridge.gameActions;
-			const game = cartridge.gameData;
+		++game.commandCounter;
 
-			++game.commandCounter;
+		let returnString;
 
-			let returnString;
+		debug(`Command no. ${game.commandCounter}`);
 
-			debug(gameID + ': ' + game.commandCounter);
+		if (isActionDefinedInCartridge(gameActions, command.action)) {
 
-			if (isActionDefinedInCartridge(gameActions, command.action)) {
+			debug(`Running cartridge action '${command.action}'`);
+			returnString = gameActions[command.action](game, command, consoleInterface);
 
-				debug(`Running cartridge action '${command.action}'`);
-				returnString = gameActions[command.action](game, command, consoleInterface);
+		} else if (isActionDefinedInConsole(actions, command.action)) {
 
-			} else if (isActionDefinedInConsole(actions, command.action)) {
+			debug(`Running console action '${command.action}'`);
+			returnString = actions[command.action](game, command).message;
 
-				debug(`Running console action '${command.action}'`);
-				returnString = actions[command.action](game, command).message;
+		} else if (canInteractWithSubjectInCurrentLocation(game, command.action, command.subject)) {
 
-			} else if (canInteractWithSubjectInCurrentLocation(game, command.action, command.subject)) {
+			debug(`Performing interaction '${command.action}' in current location on subject ${command.subject}`);
+			returnString = interactWithSubjectInCurrentLocation(game, command.action, command.subject);
+		}
 
-				debug(`Performing interaction '${command.action}' in current location on subject ${command.subject}`);
-				returnString = interactWithSubjectInCurrentLocation(game, command.action, command.subject);
-			}
+		returnString = returnString || 'I don\'t know how to do that';
 
-			returnString = returnString || 'I don\'t know how to do that';
+		const currentLocation = getCurrentLocation(game);
 
-			const currentLocation = getCurrentLocation(game);
+		if (typeof currentLocation.updateLocation === 'function') {
 
-			if (typeof currentLocation.updateLocation === 'function') {
+			const updateLocationString = currentLocation.updateLocation(command);
 
-				const updateLocationString = currentLocation.updateLocation(command);
-
-				if (updateLocationString) {
-					returnString = updateLocationString;
-				}
-			}
-
-			return checkForGameEnd(game, returnString);
-
-		} else {
-
-			debug(gameID + ': no game');
-
-			if(command.action === 'load') {
-				return loadCartridge(gameID, command.subject);
-			} else {
-				return listCartridges();
+			if (updateLocationString) {
+				returnString = updateLocationString;
 			}
 		}
+
+		const checkForGameEndString = checkForGameEnd(game, returnString);
+
+		return {
+			message: checkForGameEndString,
+			cartridge: {
+				gameData: cartridge.gameData,
+				gameActions: cartridge.gameActions
+			}
+		};
 	};
-
-	// ----------------------------\
-	// === Game Setup Functions ===========================================================================================
-	// ----------------------------/
-	function registerCartridge(name: any, cartridgeDefinition: any) {
-		availableCartridges[name] = cartridgeDefinition;
-	}
-
-	function listCartridges(){
-		var cartridges = Object.keys(availableCartridges);
-		if (cartridges.length === 0){
-			return 'No game cartridges found.'
-		}
-		var cartridgesFormated = 'Available Games: \n';
-		for(var i = 0; i < cartridges.length; i++){
-			cartridgesFormated = cartridgesFormated.concat(cartridges[i]);
-			if(i < cartridges.length-1){
-				cartridgesFormated = cartridgesFormated.concat('\n');
-			}
-		}
-		return cartridgesFormated;
-	}
-
-	function loadCartridge(gameID: any, gameName: any){
-		if (!gameName){
-			return "Specify game cartridge to load.";
-		}
-		if (!availableCartridges[gameName]) {
-			return `Cartridge ${gameName} not found.`;
-		}
-		
-		var file = availableCartridges[gameName];
-
-		games[gameID] = {gameData: file.gameData, gameActions: file.gameActions};
-		games[gameID].gameData.gameID = gameID;
-		return games[gameID].gameData.introText + '\n' + getLocationDescription(games[gameID].gameData);
-	}
 
 	// ----------------------------\
 	// === Console Actions =================================================================================================
 	// ----------------------------/
 	var actions: any = {
-
-		die: function(game: IGameData, command: ICommand): IGameActionResult {
-
-			delete games[game.gameID];
-
-			return { message: 'You are dead', success: true };
-		},
 
 		drop: function(game: IGameData, command: ICommand): IGameActionResult {
 
@@ -307,7 +260,7 @@ export default function createConsole(options?: IConsoleOptions, parser?: IParse
 	// ----------------------------\
 	// === Helper Functions ===============================================================================================
 	// ----------------------------/
-	function checkForGameEnd(game: any, returnString: any){
+	function checkForGameEnd(game: any, returnString: any) {
 		if(game.gameOver){
 		returnString = returnString + '\n' + game.outroText;
 			actions.die(game,{action:'die'});
@@ -558,7 +511,7 @@ export default function createConsole(options?: IConsoleOptions, parser?: IParse
 
 	return {
 		input: input,
-		registerCartridge: registerCartridge
+		getIntroText: getIntroText
 	};
 
 }
