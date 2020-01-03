@@ -21,7 +21,9 @@ export class CartridgeBuilder {
 
         const gameContext = new GameContext(this);
 
-        this._mapBuilder = this._mapBuilder || new MapBuilder(gameContext);
+        const savedMap = this._savedCartridge ? this._savedCartridge.gameData.map : undefined;
+
+        this._mapBuilder = this._mapBuilder || new MapBuilder(gameContext, savedMap);
 
         mapConfigurator(this._mapBuilder);
 
@@ -32,7 +34,9 @@ export class CartridgeBuilder {
         
         const gameContext = new GameContext(this);
 
-        this._playerBuilder = this._playerBuilder || new PlayerBuilder(gameContext);
+        const savedPlayer = this._savedCartridge ? this._savedCartridge.gameData.player : undefined;
+
+        this._playerBuilder = this._playerBuilder || new PlayerBuilder(gameContext, savedPlayer);
 
         playerConfigurator(this._playerBuilder);
 
@@ -51,12 +55,14 @@ export class CartridgeBuilder {
 
     public build(): ICartridge {
         
+        const savedGameData = this._savedCartridge ? this._savedCartridge.gameData : undefined;
+
         this.game = {
             gameData: {
-                commandCounter: 0,
-                gameOver: false,
-                introText: this._introText,
-                outroText: this._outroText,
+                commandCounter: savedGameData ? savedGameData.commandCounter : 0,
+                gameOver: savedGameData ? savedGameData.gameOver : false,
+                introText: savedGameData ? savedGameData.introText : this._introText,
+                outroText: savedGameData ? savedGameData.outroText : this._outroText,
                 player: this._playerBuilder.build(),
                 map: this._mapBuilder.build()
             },

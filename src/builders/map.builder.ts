@@ -6,9 +6,11 @@ export class MapBuilder {
 
     private _locationBuilders: { [locationName: string]: LocationBuilder } = {};
     private _gameContext: GameContext;
+    private _savedMap: IMap;
 
-    constructor(gameContext: GameContext) {
+    constructor(gameContext: GameContext, savedMap?: IMap) {
         this._gameContext = gameContext;
+        this._savedMap = savedMap;
     }
 
     configureLocation(locationName: string, locationConfigurator: (locationBuilder: LocationBuilder) => void): MapBuilder {
