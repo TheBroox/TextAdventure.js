@@ -45,7 +45,9 @@ export class ConsoleHttpServer {
     this._app.use(session({secret: '1234567890QWERTY', resave: false, saveUninitialized: true}));
 
     const con = createConsole(this._cartridge, {
-      debug: true
+      onDebugLog: (message: string) => {
+        console.log(`    [DEBUG] ${message}`);
+      }
     });
 
     this._app.post(consoleApiPath, function(req,res) {

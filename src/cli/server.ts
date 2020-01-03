@@ -6,8 +6,9 @@ import createConsole, { IConsoleInputResponse } from '../core/console/console';
 import necroCartridgeBuilder from '../cartridges/necro';
 import { FileSystemCartridgeRepository } from '../core/repositories/file-system.cartridge.repository';
 import path from 'path';
-const debugEnabled = false;
-const devmodeEnabled = true;
+
+const debugEnabled = process.env.NECRO_DEBUG ? (process.env.NECRO_DEBUG.toLowerCase() === 'true') : false;
+const devmodeEnabled = process.env.NECRO_DEVMODE ? (process.env.NECRO_DEVMODE.toLowerCase() === 'true') : false;
 const saveFilePath = process.env.NECRO_SAVEFILE || path.join(__dirname, 'savefile.json');
 
 async function main() {
@@ -18,7 +19,7 @@ async function main() {
   const necroCartridge = necroCartridgeBuilder(savedCartridge);
 
   const cons = createConsole(necroCartridge, {
-    debug: debugEnabled
+    onDebugLog: logDebug
   });
 
   logDev('Started CLI server');
@@ -74,11 +75,18 @@ async function main() {
     await repository.saveCartridgeAsync(response.cartridge);
   }
 }
- 
+
 function logDev(message: string) {
 
   if (devmodeEnabled) {
     console.log(chalk.cyanBright(`[DEV]> ${message}`));
+  }
+}
+
+function logDebug(message: string) {
+
+  if (debugEnabled) {
+    console.log(chalk.cyanBright(`    [DEBUG]> ${message}`));
   }
 }
 

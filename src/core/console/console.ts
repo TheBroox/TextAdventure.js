@@ -3,7 +3,7 @@ import { IParser } from './parser';
 import { ICartridge, IGameData, IGameActions, ILocation, IGameActionResult, ICommand, DefaultConsoleActons, IItem } from '../shims/textadventurejs.shim';
 
 export interface IConsoleOptions {
-	debug?: boolean;
+	onDebugLog?: (message: string) => void;
 }
 
 export interface IConsole {
@@ -68,6 +68,8 @@ export default function createConsole(cartridge: ICartridge, options?: IConsoleO
 		}
 
 		const checkForGameEndString = checkForGameEnd(game, returnString);
+
+		debug(JSON.stringify(cartridge.gameData, null, 4));
 
 		return {
 			message: checkForGameEndString,
@@ -286,8 +288,8 @@ export default function createConsole(cartridge: ICartridge, options?: IConsoleO
 	}
 
 	function debug(debugText: any){
-		if(options.debug){
-			console.log(`    [DEBUG] ${debugText}`);
+		if(typeof options.onDebugLog === 'function'){
+			options.onDebugLog(debugText);
 		}
 	}
 
@@ -468,6 +470,7 @@ export default function createConsole(cartridge: ICartridge, options?: IConsoleO
 	}
 
 	function canInteractWithSubjectInCurrentLocation(gameData: IGameData, actionName: string, subjectName: string): boolean {
+
 		return (isItemInCurrentLocation(gameData, subjectName) && isActionDefinedOnItemInCurrentLocation(gameData, actionName, subjectName)) ||
 			(isInteractableInCurrentLocation(gameData, subjectName) && isActionDefinedOnInteractableInCurrentLocation(gameData, actionName, subjectName));
 	}
