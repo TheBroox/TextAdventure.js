@@ -3,10 +3,9 @@ const chalk = require('chalk');
 
 import createConsole, { IConsoleInputResponse } from '../core/console/console';
 
-import * as necroCartridge from '../cartridges/necro';
+import necroCartridgeBuilder from '../cartridges/necro';
 import { FileSystemCartridgeRepository } from '../core/repositories/file-system.cartridge.repository';
 import path from 'path';
-
 const debugEnabled = false;
 const devmodeEnabled = true;
 const saveFilePath = process.env.NECRO_SAVEFILE || path.join(__dirname, 'savefile.json');
@@ -14,6 +13,9 @@ const saveFilePath = process.env.NECRO_SAVEFILE || path.join(__dirname, 'savefil
 async function main() {
 
   const repository = new FileSystemCartridgeRepository(saveFilePath);
+
+  const savedCartridge = await repository.loadCartridgeAsync();
+  const necroCartridge = necroCartridgeBuilder(savedCartridge);
 
   const cons = createConsole(necroCartridge, {
     debug: debugEnabled

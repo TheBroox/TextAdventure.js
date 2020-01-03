@@ -23,10 +23,30 @@ export class FileSystemCartridgeRepository implements ICartridgeRepository {
 
     public async loadCartridgeAsync(): Promise<ICartridge> {
 
+        const saveFileExits = await this.saveFileExistsAsync();
+
+        if (!saveFileExits) {
+            return undefined;
+        }
+
         const rawData = await readFileAsync(this._saveFilePath, {
             encoding: 'utf8'
         });
 
         return <ICartridge>JSON.parse(rawData);
+    }
+
+    private async saveFileExistsAsync(): Promise<boolean> {
+
+        return new Promise<boolean>((resolve, reject) => {
+            fs.access(this._saveFilePath, fs.constants.F_OK, (err) => {
+                if (err) {
+                    resolve(false);
+                } else {
+                    resolve(true);
+                }
+            })
+        });
+           
     }
 }
