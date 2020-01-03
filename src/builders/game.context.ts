@@ -15,12 +15,12 @@ export class GameContext {
 
     public getPlayerProperty(property: string): any {
 
-        return this._gameBuilder.game.gameData.player[property];
+        return this._gameBuilder.game.gameData.player.properties[property];
     }
 
     public setPlayerProperty(property: string, value: any): void {
 
-        this._gameBuilder.game.gameData.player[property] = value;
+        this._gameBuilder.game.gameData.player.properties[property] = value;
     }
 
     public spawnExitInLocation(locationName: string, exitName: string, exitConfigurator: (exitBuilder: ExitBuilder) => void): void {

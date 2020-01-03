@@ -31,7 +31,8 @@ export class PlayerBuilder {
 
         return {
             currentLocation: this._savedPlayer ? this._savedPlayer.currentLocation : this._startingLocation,
-            inventory: this._itemsBuilder.build()
+            inventory: this._itemsBuilder.build(),
+            properties: this._savedPlayer ? this._savedPlayer.properties : {}
         };
     }
 }

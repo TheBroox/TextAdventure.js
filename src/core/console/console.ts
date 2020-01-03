@@ -69,8 +69,6 @@ export default function createConsole(cartridge: ICartridge, options?: IConsoleO
 
 		const checkForGameEndString = checkForGameEnd(game, returnString);
 
-		debug(JSON.stringify(cartridge.gameData, null, 4));
-
 		return {
 			message: checkForGameEndString,
 			cartridge: {

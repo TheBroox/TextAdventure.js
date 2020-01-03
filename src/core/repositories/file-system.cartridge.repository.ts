@@ -16,7 +16,21 @@ export class FileSystemCartridgeRepository implements ICartridgeRepository {
 
     public async saveCartridgeAsync(cartridge: ICartridge): Promise<void> {
 
-        await writeFileAsync(this._saveFilePath, JSON.stringify(cartridge, null, 4), {
+        // do not save map, as it can contain dynamically-added functionality (which needs to be rebuilt everytime)
+        const cartridgeToSave: ICartridge = {
+            gameData: {
+                commandCounter: cartridge.gameData.commandCounter,
+                gameOver: cartridge.gameData.gameOver,
+                gameID: cartridge.gameData.gameID,
+                introText: cartridge.gameData.introText,
+                outroText: cartridge.gameData.outroText,
+                player: cartridge.gameData.player,
+                map: undefined
+            },
+            gameActions: undefined
+        };
+
+        await writeFileAsync(this._saveFilePath, JSON.stringify(cartridgeToSave, null, 4), {
             encoding: 'utf8'
         });
     }

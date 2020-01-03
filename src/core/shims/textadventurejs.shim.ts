@@ -16,7 +16,8 @@ export interface IGameData {
 export interface IPlayer {
     currentLocation: string;
     inventory: IItemCollection;
-    [otherProps: string]: any;
+    properties: any;
+    // [otherProps: string]: any;
 }
 
 export interface IMap {
