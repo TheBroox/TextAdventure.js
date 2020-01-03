@@ -1,5 +1,5 @@
 import { DefaultConsoleActons, ICartridge } from "../../core/shims/textadventurejs.shim";
-import { GameBuilder } from "../../builders/game.builder";
+import { CartridgeBuilder } from "../../builders/cartridge.builder";
 import fs from 'fs';
 import path from 'path';
 
@@ -7,7 +7,7 @@ const introText = fs.readFileSync(path.join(__dirname, 'introtext.txt'), 'utf8')
 
 export = (savedCartridge?: ICartridge) => {
 
-    const gameBuilder: GameBuilder = new GameBuilder();
+    const gameBuilder: CartridgeBuilder = new CartridgeBuilder(savedCartridge);
 
     gameBuilder
     .introText(introText)

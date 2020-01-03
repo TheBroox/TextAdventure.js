@@ -1,4 +1,4 @@
-import { GameBuilder } from './game.builder';
+import { CartridgeBuilder } from './cartridge.builder';
 import { LocationBuilder } from './location.builder';
 import { ExitBuilder } from './exits.builder';
 import { InteractableBuilder } from './interactables.builder';
@@ -7,9 +7,9 @@ import { ItemBuilder } from './items.builder';
 
 export class GameContext {
 
-    private _gameBuilder: GameBuilder;
+    private _gameBuilder: CartridgeBuilder;
 
-    constructor(gameBuilder: GameBuilder) {
+    constructor(gameBuilder: CartridgeBuilder) {
         this._gameBuilder = gameBuilder;
     }
 

@@ -3,20 +3,21 @@ import { ICartridge } from '../core/shims/textadventurejs.shim';
 import { GameContext } from './game.context';
 import { PlayerBuilder } from './player.builder';
 
-export class GameBuilder {
+export class CartridgeBuilder {
 
     private _mapBuilder: MapBuilder;
     private _playerBuilder: PlayerBuilder;
     private _introText: string;
     private _outroText: string;
+    private _savedCartridge: ICartridge;
     
     public game: ICartridge;
 
-    constructor() {
-        
+    constructor(savedCartridge?: ICartridge) {
+        this._savedCartridge = savedCartridge;
     }
 
-    public configureMap(mapConfigurator: (mapBuilder: MapBuilder) => void): GameBuilder {
+    public configureMap(mapConfigurator: (mapBuilder: MapBuilder) => void): CartridgeBuilder {
 
         const gameContext = new GameContext(this);
 
@@ -27,7 +28,7 @@ export class GameBuilder {
         return this;
     }
 
-    public configurePlayer(playerConfigurator: (playerBuilder: PlayerBuilder) => void): GameBuilder {
+    public configurePlayer(playerConfigurator: (playerBuilder: PlayerBuilder) => void): CartridgeBuilder {
         
         const gameContext = new GameContext(this);
 
@@ -38,12 +39,12 @@ export class GameBuilder {
         return this;
     }
 
-    public introText(introText: string): GameBuilder {
+    public introText(introText: string): CartridgeBuilder {
         this._introText = introText;
         return this;
     }
 
-    public outroText(outroText: string): GameBuilder {
+    public outroText(outroText: string): CartridgeBuilder {
         this._outroText = outroText;
         return this;
     }
