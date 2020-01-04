@@ -1,4 +1,4 @@
-import { IPlayer } from '../core/shims/textadventurejs.shim';
+import { IPlayer, IMap } from '../core/shims/textadventurejs.shim';
 import { GameContext } from './game.context';
 import { ItemsBuilder } from './items.builder';
 
@@ -7,10 +7,12 @@ export class PlayerBuilder {
     private _gameContext: GameContext;
     private _startingLocation: string;
     private _itemsBuilder: ItemsBuilder;
+    private _savedPlayer: IPlayer;
 
-    constructor(gameContext: GameContext) {
+    constructor(gameContext: GameContext, savedPlayer?: IPlayer) {
         this._gameContext = gameContext;
-        this._itemsBuilder = new ItemsBuilder(this._gameContext);
+        this._itemsBuilder = new ItemsBuilder(this._gameContext, savedPlayer ? savedPlayer.inventory : undefined);
+        this._savedPlayer = savedPlayer;
     }
 
     public startingLocation(locationName: string): PlayerBuilder {
@@ -28,8 +30,9 @@ export class PlayerBuilder {
     public build(): IPlayer {
 
         return {
-            currentLocation: this._startingLocation,
-            inventory: this._itemsBuilder.build()
+            currentLocation: this._savedPlayer ? this._savedPlayer.currentLocation : this._startingLocation,
+            inventory: this._itemsBuilder.build(),
+            properties: this._savedPlayer ? this._savedPlayer.properties : {}
         };
     }
 }

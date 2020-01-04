@@ -1,4 +1,4 @@
-import { GameBuilder } from './game.builder';
+import { CartridgeBuilder } from './cartridge.builder';
 import { LocationBuilder } from './location.builder';
 import { ExitBuilder } from './exits.builder';
 import { InteractableBuilder } from './interactables.builder';
@@ -7,20 +7,20 @@ import { ItemBuilder } from './items.builder';
 
 export class GameContext {
 
-    private _gameBuilder: GameBuilder;
+    private _gameBuilder: CartridgeBuilder;
 
-    constructor(gameBuilder: GameBuilder) {
+    constructor(gameBuilder: CartridgeBuilder) {
         this._gameBuilder = gameBuilder;
     }
 
     public getPlayerProperty(property: string): any {
 
-        return this._gameBuilder.game.gameData.player[property];
+        return this._gameBuilder.game.gameData.player.properties[property];
     }
 
     public setPlayerProperty(property: string, value: any): void {
 
-        this._gameBuilder.game.gameData.player[property] = value;
+        this._gameBuilder.game.gameData.player.properties[property] = value;
     }
 
     public spawnExitInLocation(locationName: string, exitName: string, exitConfigurator: (exitBuilder: ExitBuilder) => void): void {

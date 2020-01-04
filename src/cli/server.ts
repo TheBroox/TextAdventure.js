@@ -1,25 +1,34 @@
 const io = require('console-read-write');
 const chalk = require('chalk');
 
-import createConsole from '../core/console/console';
+import createConsole, { IConsoleInputResponse } from '../core/console/console';
 
-import * as necroCartridge from '../cartridges/necro';
+import necroCartridgeFactory from '../cartridges/necro';
+import { FileSystemCartridgeRepository } from '../core/repositories/file-system.cartridge.repository';
+import path from 'path';
+import { CartridgeBuilder } from '../builders/cartridge.builder';
 
-const debugEnabled = false;
-const devmodeEnabled = true;
+const debugEnabled = process.env.NECRO_DEBUG ? (process.env.NECRO_DEBUG.toLowerCase() === 'true') : false;
+const devmodeEnabled = process.env.NECRO_DEVMODE ? (process.env.NECRO_DEVMODE.toLowerCase() === 'true') : false;
+const saveFilePath = process.env.NECRO_SAVEFILE || path.join(__dirname, 'savefile.json');
 
 async function main() {
 
-  const cons = createConsole({
-    debug: debugEnabled
+  const repository = new FileSystemCartridgeRepository(saveFilePath);
+
+  const savedCartridge = await repository.loadCartridgeAsync();
+  const cartridgeBuilder = new CartridgeBuilder(savedCartridge);
+  const necroCartridge = necroCartridgeFactory(cartridgeBuilder);
+
+  const cons = createConsole(necroCartridge, {
+    onDebugLog: logDebug
   });
 
-  cons.registerCartridge('necro', necroCartridge);
+  logDev('Started CLI server');
+  logDev(`Cartridge data will be saved to ${saveFilePath}`);
 
-  io.write('Started CLI server:');
+  console.log(chalk.cyan(cons.getIntroText()));
 
-  const gameId = 'console_game';
- 
   while (true) {
 
     const command: string = await io.read();
@@ -28,6 +37,8 @@ async function main() {
       io.write('Exiting...');
       break;
     }
+
+    let response: IConsoleInputResponse;
 
     if (devmodeEnabled) {
 
@@ -46,26 +57,39 @@ async function main() {
             continue;
           }
   
-          console.log(chalk.cyanBright(`[DEV]> ${individualCommand}`));
+          logDev(individualCommand);
   
-          const response = cons.input(individualCommand.trim(), gameId);
-  
-          console.log(chalk.cyan(response));
+          response = cons.input(individualCommand.trim());
+          console.log(chalk.cyan(response.message));
         }
   
       } else {
-        const response = cons.input(command, gameId);
-
-        console.log(chalk.cyan(response));
+        response = cons.input(command);
+        console.log(chalk.cyan(response.message));
       }
 
     } else {
 
-      const response = cons.input(command, gameId);
+      response = cons.input(command);
+      console.log(chalk.cyan(response.message));
+    }
 
-      console.log(chalk.cyan(response));
-    }    
+    await repository.saveCartridgeAsync(response.cartridge);
   }
 }
- 
+
+function logDev(message: string) {
+
+  if (devmodeEnabled) {
+    console.log(chalk.cyanBright(`[DEV]> ${message}`));
+  }
+}
+
+function logDebug(message: string) {
+
+  if (debugEnabled) {
+    console.log(chalk.cyanBright(`    [DEBUG]> ${message}`));
+  }
+}
+
 main();

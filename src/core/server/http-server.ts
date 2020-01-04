@@ -18,12 +18,12 @@ export class ConsoleHttpServer {
   private _options: IServerOptions = {};
   private _middleware?: Handler[];
   private _app: Express;
-  private _cartridges: { [cartridgeName: string]: ICartridge };
+  private _cartridge: ICartridge;
 
-  constructor(options: IServerOptions) {
+  constructor(cartridge: ICartridge, options: IServerOptions) {
 
     this._middleware = [];
-    this._cartridges = {};
+    this._cartridge = cartridge;
     this._options = options;
   }
 
@@ -44,31 +44,20 @@ export class ConsoleHttpServer {
 
     this._app.use(session({secret: '1234567890QWERTY', resave: false, saveUninitialized: true}));
 
-    const con = createConsole({
-      debug: true
+    const con = createConsole(this._cartridge, {
+      onDebugLog: (message: string) => {
+        console.log(`    [DEBUG] ${message}`);
+      }
     });
 
-    if (this._cartridges) {
-      Object.keys(this._cartridges).forEach(cartridgeName => {
-        con.registerCartridge(cartridgeName, this._cartridges[cartridgeName]);
-      })
-    }
-
     this._app.post(consoleApiPath, function(req,res) {
-      res.json({response: con.input(req.body.input, req.session.id)});
+      res.json({response: con.input(req.body.input)});
     });
   }
 
   public use(middleware: Handler): ConsoleHttpServer {
 
     this._middleware.push(middleware);
-
-    return this;
-  }
-
-  public registerCartridge(name: string, cartridge: ICartridge): ConsoleHttpServer {
-
-    this._cartridges[name] = cartridge;
 
     return this;
   }

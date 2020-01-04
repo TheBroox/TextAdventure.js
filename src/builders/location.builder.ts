@@ -19,13 +19,16 @@ export class LocationBuilder {
 
     private _gameContext: GameContext;
 
-    constructor(gameContext: GameContext) {
+    private _savedLocation: ILocation;
+
+    constructor(gameContext: GameContext, savedLocation?: ILocation) {
 
         this._gameContext = gameContext;
+        this._savedLocation = savedLocation;
         
-        this._interactablesBuilder = new InteractablesBuilder(this._gameContext);
-        this._itemsBuilder = new ItemsBuilder(this._gameContext);
-        this._exitsBuilder = new ExitsBuilder(this._gameContext);
+        this._interactablesBuilder = new InteractablesBuilder(this._gameContext, this._savedLocation ? this._savedLocation.interactables : undefined);
+        this._itemsBuilder = new ItemsBuilder(this._gameContext, this._savedLocation ? this._savedLocation.items : undefined);
+        this._exitsBuilder = new ExitsBuilder(this._gameContext, this._savedLocation ? this._savedLocation.exits : undefined);
     }
 
     public displayName(displayName: string): LocationBuilder {
@@ -83,9 +86,9 @@ export class LocationBuilder {
         };
 
         return {
-            description: this._description,
-            firstVisit: true,
-            displayName: this._displayName,
+            description: this._savedLocation ? this._savedLocation.description : this._description,
+            firstVisit: this._savedLocation ? this._savedLocation.firstVisit : true,
+            displayName: this._savedLocation ? this._savedLocation.displayName : this._displayName,
             exits: this._exitsBuilder.build(),
             interactables: this._interactablesBuilder.build(),
             items: this._itemsBuilder.build(),

@@ -5,9 +5,11 @@ export class ItemsBuilder {
 
     private _gameContext: GameContext;
     private _itemBuilders: { [itemName: string]: ItemBuilder } = {};
+    private _savedItems: IItemCollection;
 
-    constructor(gameContext: GameContext) {
+    constructor(gameContext: GameContext, savedItems?: IItemCollection) {
         this._gameContext = gameContext;
+        this._savedItems = savedItems;
     }
 
     public add(itemName: string): ItemBuilder {
@@ -19,14 +21,25 @@ export class ItemsBuilder {
 
     public build(): IItemCollection {
         
+        const itemBuilders = this._savedItems ? this.createItemBuildersFromSavedItems() : this._itemBuilders;
         const items: IItemCollection = {};
 
-        Object.keys(this._itemBuilders).forEach(itemName => {
-
-            items[itemName] = this._itemBuilders[itemName].build();
+        Object.keys(itemBuilders).forEach(itemName => {
+            items[itemName] = itemBuilders[itemName].build();
         });
 
         return items;
+    }
+
+    private createItemBuildersFromSavedItems(): { [itemName: string]: ItemBuilder } {
+
+        const itemBuilders: { [itemName: string]: ItemBuilder } = {};
+
+        Object.keys(this._savedItems).forEach(itemName => {
+            itemBuilders[itemName] = new ItemBuilder(this._gameContext, this._savedItems[itemName]);
+        });
+
+        return itemBuilders;
     }
 }
 
@@ -43,10 +56,13 @@ export class ItemBuilder {
     private _description: string;
     private _hidden: boolean;
 
-    constructor(gameContext: GameContext) {
+    private _savedItem: IItem;
+
+    constructor(gameContext: GameContext, savedItem?: IItem) {
         this._gameContext = gameContext;
         this._hidden = false;
         this._quantity = 1;
+        this._savedItem = savedItem;
     }
 
     public displayName(displayName: string): ItemBuilder {
@@ -117,10 +133,10 @@ export class ItemBuilder {
         }
 
         return {
-            description: this._description,
-            displayName: this._displayName,
-            hidden: this._hidden,
-            quantity: this._quantity,
+            description: this._savedItem ? this._savedItem.description : this._description,
+            displayName: this._savedItem ? this._savedItem.displayName : this._displayName,
+            hidden: this._savedItem ? this._savedItem.hidden : this._hidden,
+            quantity: this._savedItem ? this._savedItem.quantity : this._quantity,
             interactions: interactions,
             onTaken: onTaken,
             use: onUse
