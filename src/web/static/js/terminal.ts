@@ -5,9 +5,9 @@ $(function(){
 
 	// ===== Event Handlers =============================================================
 	// ----- Input Submit ---------------------------------------------------------------
-	$('#console').submit(function(event) {
+	$('#console').submit(function(event: any) {
 		event.preventDefault();
-		var inputString = $('#input').val();
+		var inputString = '' + $('#input').val();
 		inputString = inputString.trim();
 		$('#input').val('');
 		toScreen(inputString,'user');
@@ -20,7 +20,7 @@ $(function(){
 		inputBufferIndex = inputBuffer.length;
 	});
 	// ----- Input Buffer ---------------------------------------------------------------
-	var inputBuffer = [];
+	var inputBuffer: any[] = [];
 	var inputBufferIndex = 0;
 	$(document).keydown(function(event) {
 		switch(event.which) {
@@ -48,7 +48,7 @@ $(function(){
 
 // ===== Functions ======================================================================
 // ----- Send Message to Server ---------------------------------------------------------
-function messageServer(message){
+function messageServer(message: any){
 	$.post(window.location.href+'console', {"input": message}, function(data) {
 		toScreen(data.response,'console');
 	}).fail(function(){
@@ -61,7 +61,7 @@ function displayResize(){
 	$('#display').scrollTop($('#display')[0].scrollHeight);
 }
 // ----- Write to Screen ----------------------------------------------------------------
-function toScreen(message, actor){
+function toScreen(message: any, actor: any){
 	if(actor == 'user'){
 		message = '> ' + message;
 	}

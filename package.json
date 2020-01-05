@@ -10,7 +10,14 @@
   "license": "MIT License",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "clean": "rimraf dist",
+    "build": "npm run clean && tsc && npm run copy",
+    "copy": "npm run copy:web && npm run copy:cartridges",
+    "copy:cartridges": "cd src/cartridges && copyfiles -e **/*.ts **/*.* ../../dist/cartridges && cd ../..",
+    "copy:web": "cd src/web && copyfiles -e **/*.ts static/**/*.* ../../dist/web && cd ../..",
+    "start:web": "node dist/web/server.js",
+    "start:cli": "node dist/cli/server.js",
+    "start": "npm run start:cli"
   },
   "files": [
     "server.js",
@@ -24,9 +31,21 @@
     "url": "https://github.com/TheBroox/TextAdventure.js"
   },
   "dependencies": {
+    "@types/body-parser": "1.17.1",
+    "@types/express": "4.17.2",
+    "@types/express-session": "1.15.16",
+    "@types/jquery": "3.3.31",
+    "@types/node": "^13.1.1",
     "body-parser": "^1.12.0",
+    "chalk": "3.0.0",
+    "console-read-write": "0.1.1",
     "express": "^4.12.0",
     "express-session": "^1.10.3",
-    "open": "^0.0.5"
+    "open": "^7.0.0"
+  },
+  "devDependencies": {
+    "copyfiles": "^2.1.1",
+    "rimraf": "^3.0.0",
+    "typescript": "^3.7.4"
   }
 }
